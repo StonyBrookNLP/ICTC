@@ -1,0 +1,121 @@
+<html>
+    <head>
+        <title>Trump/Clinton Responder</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href='custom.css' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-lg-8 col-lg-offset-2">
+
+                    <h1>Get Response From Trump/Clinton</h1>
+
+                    <p class="lead">Type in a sentence and get a response from Trump/Clinton bot</p>
+
+
+                    <form id="input-form" method="post" action="contact.php" role="form">
+
+                        <div class="messages"></div>
+
+                        <div class="controls">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="form_message">Message *</label>
+                                        <textarea id="form_message" name="message" class="form-control" placeholder="Message to respond to" rows="4" required="required" data-error="Please, type a setence."></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>
+                                        Get response from:
+                                    </label>
+                                    <div class="radio-inline control-label">
+                                        <label>
+                                            <input type="radio" name="optionsBot" id="optionTrump" value="trump" checked>
+                                            Trump
+                                        </label>
+                                    </div>
+                                    <div class="radio-inline control-label">
+                                        <label>
+                                            <input type="radio" name="optionsBot" id="optionClinton" value="clinton">
+                                            Clinton
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="submit" class="btn btn-success btn-send" value="Submit">
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <img src="https://i.imgflip.com/1cblat.jpg" class="img-responsive" alt="Trump response">
+
+                    <br/><br/>
+
+                    <form id="feedback-form" method="post" action="contact.php" role="form">
+
+                        <div class="messages"></div>
+
+                        <div class="controls">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>
+                                        How Trumpy is the response?
+                                    </label>
+                                    <div class="radio control-label">
+                                        <label>
+                                            <input type="radio" name="optionsFeedback" id="option1" value="1" required="true">
+                                            <img src="/Users/bobby/Pictures/ICTC/Trump/1_not_at_all.png" alt="Trump response">
+                                        </label>
+                                    </div>
+                                    <div class="radio control-label">
+                                        <label>
+                                            <input type="radio" name="optionsFeedback" id="option2" value="2">
+                                            <img src="/Users/bobby/Pictures/ICTC/Trump/2_in_between.png" alt="Trump response">
+                                        </label>
+                                    </div>
+                                    <div class="radio control-label">
+                                        <label>
+                                            <input type="radio" name="optionsFeedback" id="option3" value="3">
+                                            <img src="/Users/bobby/Pictures/ICTC/Trump/3_slightly_trump.png" alt="Trump response">
+                                        </label>
+                                    </div>
+                                    <div class="radio control-label">
+                                        <label>
+                                            <input type="radio" name="optionsFeedback" id="option4" value="4">
+                                            <img src="/Users/bobby/Pictures/ICTC/Trump/4_very_trump.png" alt="Trump response">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="submit" class="btn btn-success btn-send" value="Submit Feedback">
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="validator.js"></script>
+        <script src="contact.js"></script>
+    </body>
+</html>
