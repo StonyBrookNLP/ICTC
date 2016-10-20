@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link href='custom.css' rel='stylesheet' type='text/css'>
     </head>
     <body>
 
@@ -66,38 +65,63 @@
 
                         <div class="messages"></div>
 
+                        <div class="alert alert-success" role="alert">
+                            Thanks for trying out the app! <br/>
+                            <strong>Please help us make it better by giving your valuable feedback.</strong>
+                        </div>
+
                         <div class="controls">
 
                             <div class="row">
                                 <div class="col-md-12">
                                     <label>
-                                        How Trumpy is the response?
+                                        Does it sound like a valid response?
                                     </label>
-                                    <div class="radio control-label">
+                                    <br/>
+                                    <div class="radio-inline control-label">
+                                        <label>
+                                            <input type="radio" name="optionsContent" id="optionContent1" value="1" required="true">
+                                            Unrelated
+                                        </label>
+                                    </div>
+                                    <div class="radio-inline control-label">
+                                        <label>
+                                            <input type="radio" name="optionsContent" id="optionContent2" value="2">
+                                            Bland
+                                        </label>
+                                    </div>
+                                    <div class="radio-inline control-label">
+                                        <label>
+                                            <input type="radio" name="optionsContent" id="optionContent3" value="3">
+                                            Touche
+                                        </label>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <label>
+                                        Does it sound like the way Trump would say it?
+                                    </label>
+                                    <br/>
+                                    <div class="radio-inline control-label">
                                         <label>
                                             <input type="radio" name="optionsFeedback" id="option1" value="1" required="true">
-                                            <img src="/Users/bobby/Pictures/ICTC/Trump/1_not_at_all.png" alt="Trump response">
+                                            <img src="/Users/bobby/Pictures/ICTC/Trump/not_at_all.png" class="img-responsive img-thumbnail" alt="Not at all" width="200" height="200">
                                         </label>
                                     </div>
-                                    <div class="radio control-label">
+                                    <div class="radio-inline control-label">
                                         <label>
                                             <input type="radio" name="optionsFeedback" id="option2" value="2">
-                                            <img src="/Users/bobby/Pictures/ICTC/Trump/2_in_between.png" alt="Trump response">
+                                            <img src="/Users/bobby/Pictures/ICTC/Trump/slightly_trump.png" class="img-responsive img-thumbnail" alt="Slightly Trump" width="200" height="200">
                                         </label>
                                     </div>
-                                    <div class="radio control-label">
+                                    <div class="radio-inline control-label">
                                         <label>
                                             <input type="radio" name="optionsFeedback" id="option3" value="3">
-                                            <img src="/Users/bobby/Pictures/ICTC/Trump/3_slightly_trump.png" alt="Trump response">
-                                        </label>
-                                    </div>
-                                    <div class="radio control-label">
-                                        <label>
-                                            <input type="radio" name="optionsFeedback" id="option4" value="4">
-                                            <img src="/Users/bobby/Pictures/ICTC/Trump/4_very_trump.png" alt="Trump response">
+                                            <img src="/Users/bobby/Pictures/ICTC/Trump/very_trump.png" class="img-responsive img-thumbnail" alt="Very Trump" width="200" height="200">
                                         </label>
                                     </div>
                                 </div>
+                                <br/>
                                 <div class="col-md-12">
                                     <input type="submit" class="btn btn-success btn-send" value="Submit Feedback">
                                 </div>
@@ -115,7 +139,5 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script src="validator.js"></script>
-        <script src="contact.js"></script>
     </body>
 </html>
