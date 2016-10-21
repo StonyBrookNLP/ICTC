@@ -11,33 +11,30 @@
                 <div class="col-lg-8 col-lg-offset-2">
                     <h1>Get Response From Trump/Clinton</h1>
                     <p class="lead">Type in a sentence and get a response from Trump/Clinton bot</p>
-                    <form id="respond-form" method="post" action="translate" role="form">
+
+                    <form id="input_form" method="post" action="translate" role="form">
                         <div class="controls">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="form_message">
+                                        <label for="input_text">
                                             Message*
                                         </label>
-                                        <textarea id="form_message" name="message" class="form-control" placeholder="Message to respond to" rows="4" required="required"></textarea>
+                                        <textarea id="input_text" name="message" class="form-control" placeholder="Message to respond to" rows="4" required="required"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <label>
-                                        Get response from:
+                                        Get response from:&ensp;&ensp;
                                     </label>
-                                    <div class="radio-inline control-label">
-                                        <label>
-                                            <input type="radio" name="optionsBot" id="optionTrump" value="trump" checked>
-                                            Trump
-                                        </label>
-                                    </div>
-                                    <div class="radio-inline control-label">
-                                        <label>
-                                            <input type="radio" name="optionsBot" id="optionClinton" value="clinton">
-                                            Clinton
-                                        </label>
-                                    </div>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="optionsBot" value="t" checked>
+                                        Trump
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="optionsBot" value="c">
+                                        Clinton
+                                    </label>
                                 </div>
                                 <div class="col-md-12">
                                     <input type="submit" class="btn btn-success btn-send" value="Submit">
@@ -45,19 +42,21 @@
                             </div>
                         </div>
                     </form>
+
                     <br>
-                    <div id="response-wrapper" class="col-md-12">
-                    </div>
+                    <img id="response_img" class="img-responsive img-thumbnail"/>
+                    <h4 id="response_text"></h4>
                     <br/>
                     <br/>
-                    <div class="alert alert-success" role="alert">
-                        Thanks for trying out the app!
-                        <br/>
-                        <strong>
-                            Please help us make it better by giving your valuable feedback.
-                        </strong>
-                    </div>
-                    <form id="feedback-form" method="post" action="feedback" role="form">
+
+                    <form id="feedback_form" method="post" action="feedback" role="form" hidden="true">
+                        <div class="alert alert-success" role="alert">
+                            Thanks for trying out the app!
+                            <br/>
+                            <strong>
+                                Please help us make it better by giving your valuable feedback.
+                            </strong>
+                        </div>
                         <div class="controls">
                             <div class="row">
                                 <div class="col-md-12">
@@ -65,48 +64,36 @@
                                         Does it sound like a valid response?
                                     </label>
                                     <br/>
-                                    <div class="radio-inline control-label">
-                                        <label>
-                                            <input type="radio" name="optionsContent" id="optionContent1" value="1" required="true">
-                                            Unrelated
-                                        </label>
-                                    </div>
-                                    <div class="radio-inline control-label">
-                                        <label>
-                                            <input type="radio" name="optionsContent" id="optionContent2" value="2">
-                                            Bland
-                                        </label>
-                                    </div>
-                                    <div class="radio-inline control-label">
-                                        <label>
-                                            <input type="radio" name="optionsContent" id="optionContent3" value="3">
-                                            Touche
-                                        </label>
-                                    </div>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="optionsContent" value="1" required="true">
+                                        Unrelated
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="optionsContent" value="2">
+                                        Bland
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="optionsContent" value="3">
+                                        Touche
+                                    </label>
                                     <br/>
                                     <br/>
                                     <label>
                                         Does it sound like the way Trump would say it?
                                     </label>
                                     <br/>
-                                    <div class="radio-inline control-label">
-                                        <label>
-                                            <input type="radio" name="optionsFeedback" id="option1" value="1" required="true">
-                                            <img src="/Trump/not_at_all.png" class="img-responsive img-thumbnail" alt="Not at all" width="200" height="200">
-                                        </label>
-                                    </div>
-                                    <div class="radio-inline control-label">
-                                        <label>
-                                            <input type="radio" name="optionsFeedback" id="option2" value="2">
-                                            <img src="/Trump/slightly_trump.png" class="img-responsive img-thumbnail" alt="Slightly Trump" width="200" height="200">
-                                        </label>
-                                    </div>
-                                    <div class="radio-inline control-label">
-                                        <label>
-                                            <input type="radio" name="optionsFeedback" id="option3" value="3">
-                                            <img src="/Trump/very_trump.png" class="img-responsive img-thumbnail" alt="Very Trump" width="200" height="200">
-                                        </label>
-                                    </div>
+                                    <label class="radio-inline control-label">
+                                        <input type="radio" name="optionsStyle" value="1" required="true">
+                                        <img src="/Trump/not_at_all.png" class="img-responsive img-thumbnail" alt="Not at all" width="200" height="200">
+                                    </label>
+                                    <label class="radio-inline control-label">
+                                        <input type="radio" name="optionsStyle" value="2">
+                                        <img src="/Trump/slightly_trump.png" class="img-responsive img-thumbnail" alt="Slightly Trump" width="200" height="200">
+                                    </label>
+                                    <label class="radio-inline control-label">
+                                        <input type="radio" name="optionsStyle" value="3">
+                                        <img src="/Trump/very_trump.png" class="img-responsive img-thumbnail" alt="Very Trump" width="200" height="200">
+                                    </label>
                                 </div>
                                 <br/>
                                 <div class="col-md-12">
@@ -115,9 +102,11 @@
                             </div>
                         </div>
                     </form>
-                    <div class="alert alert-success" role="alert">
-                        Thanks for your feedback!
+
+                    <div id="thanks_div" class="alert alert-success" role="alert" hidden="true">
+                        Thanks for being awesome! You rock!
                     </div>
+
                 </div>
             </div>
         </div>
