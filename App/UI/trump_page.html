@@ -6,30 +6,20 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     </head>
     <body>
-
         <div class="container">
-
             <div class="row">
-
                 <div class="col-lg-8 col-lg-offset-2">
-
                     <h1>Get Response From Trump/Clinton</h1>
-
                     <p class="lead">Type in a sentence and get a response from Trump/Clinton bot</p>
-
-
-                    <form id="input-form" method="post" action="contact.php" role="form">
-
-                        <div class="messages"></div>
-
+                    <form id="respond-form" method="post" action="translate" role="form">
                         <div class="controls">
-
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="form_message">Message *</label>
-                                        <textarea id="form_message" name="message" class="form-control" placeholder="Message to respond to" rows="4" required="required" data-error="Please, type a setence."></textarea>
-                                        <div class="help-block with-errors"></div>
+                                        <label for="form_message">
+                                            Message*
+                                        </label>
+                                        <textarea id="form_message" name="message" class="form-control" placeholder="Message to respond to" rows="4" required="required"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -54,24 +44,20 @@
                                 </div>
                             </div>
                         </div>
-
                     </form>
-
+                    <br>
                     <img src="https://i.imgflip.com/1cblat.jpg" class="img-responsive" alt="Trump response">
-
-                    <br/><br/>
-
-                    <form id="feedback-form" method="post" action="contact.php" role="form">
-
-                        <div class="messages"></div>
-
-                        <div class="alert alert-success" role="alert">
-                            Thanks for trying out the app! <br/>
-                            <strong>Please help us make it better by giving your valuable feedback.</strong>
-                        </div>
-
+                    <br/>
+                    <br/>
+                    <div class="alert alert-success" role="alert">
+                        Thanks for trying out the app!
+                        <br/>
+                        <strong>
+                            Please help us make it better by giving your valuable feedback.
+                        </strong>
+                    </div>
+                    <form id="feedback-form" method="post" action="feedback" role="form">
                         <div class="controls">
-
                             <div class="row">
                                 <div class="col-md-12">
                                     <label>
@@ -127,17 +113,16 @@
                                 </div>
                             </div>
                         </div>
-
                     </form>
-
+                    <div class="alert alert-success" role="alert">
+                        Thanks for your feedback!
+                    </div>
                 </div>
-
             </div>
-
         </div>
-
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="client.js"></script>
     </body>
 </html>
