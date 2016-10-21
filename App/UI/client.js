@@ -9,6 +9,17 @@ $(function () {
                 $("#input_form :input").prop("disabled", true);
                 $("#response_img").attr("src", data['meme_url']).attr("alt", data['response']);
                 $("#response_text").html(data['response']);
+
+                // customize feedback form for the candidate
+                var bot = $("#input_form input[name=optionsBot]:checked").val();
+                var candidate = bot == 't' ? 'Trump' : 'Clinton';
+
+                $("#candidate_name").html(candidate);
+
+                $( "#style_wrapper img" ).each(function( i ) {
+                    $(this).attr("src", candidate + '/' + (i+1) + '.png');
+                  });
+
                 $("#feedback_form").show();
             }
         });

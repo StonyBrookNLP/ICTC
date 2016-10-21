@@ -17,9 +17,17 @@ class ICTC(object):
         # translate_prog.stdin.flush()
         # op_text = translate_prog.stdout.readline()[1:] .strip()
 
+        
+        if optionsBot == 'c':
+          response = 'Clinton response'
+          meme_url = 'https://i.imgflip.com/1cq4kr.jpg'
+        else:
+          response = 'Trump response' 
+          meme_url = 'https://i.imgflip.com/1cblat.jpg' 
+
         return_json = {
-          'response': 'Trump response kjsbgerbgreskgrelntselgbtleshbltskrbhlsebgl g esglsenhlthslrdn slgrlkgselhsl slgrlgeargogsgalgiluaguwgAI GO;GHAOGHRAOIHGROEHGOIAHGOIHGR WFHOEGHAOGHAWROGHRREORHGEO HSEOIHESOHTSOIRH gseohsohos',
-          'meme_url': 'https://i.imgflip.com/1cblat.jpg'
+          'response': response,
+          'meme_url': meme_url
         }
 
         return return_json
@@ -67,7 +75,11 @@ if __name__ == '__main__':
         },
         '/Trump': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/Users/bobby/Downloads/Trump'
+            'tools.staticdir.dir': '/Users/bobby/Pictures/ICTC/Trump'
+        },
+        '/Clinton': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': '/Users/bobby/Pictures/ICTC/Clinton'
         }
     }
 
