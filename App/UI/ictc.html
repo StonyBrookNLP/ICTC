@@ -51,7 +51,7 @@
 
                     <form id="feedback_form" method="post" action="feedback" role="form" hidden="true">
                         <div class="alert alert-success" role="alert">
-                            Thanks for trying out the app!
+                            Thanks for trying out our bot!
                             <br/>
                             <strong>
                                 Please help us make it better by giving your valuable feedback.
@@ -105,6 +105,8 @@
                                     </div>
                                 </div>
                                 <br/>
+                                <br/>
+                                <br/>
                                 <div class="col-md-12">
                                     <input type="submit" class="btn btn-success btn-send" value="Submit Feedback">
                                 </div>
@@ -112,8 +114,21 @@
                         </div>
                     </form>
 
-                    <div id="thanks_div" class="alert alert-success" role="alert" hidden="true">
-                        Thanks for being awesome! You rock!
+                    <div class="modal fade" id="thanks_modal" role="dialog">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Thanks for your feedback.</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>You Rock!</p>
+                                </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+                        </div>
                     </div>
 
                 </div>
