@@ -4,9 +4,6 @@ import atexit
 from subprocess import Popen, PIPE
 
 class ICTC(object):
-    @cherrypy.expose
-    def index(self):
-        return client_html
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -35,19 +32,14 @@ class ICTC(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
-    def feedback(self, **kwargs):
+    def feedback(self):
         input_json = cherrypy.request.json
         print input_json
-        print kwargs
 
         return "Success"
 
 translate_prog = None
 feedbacks = []
-
-client_html = ''
-with open('/Users/bobby/Downloads/temp2.html', 'r') as client_html_file:
-    client_html = client_html_file.read()
 
 @atexit.register
 def kill_subprocesses():
@@ -68,18 +60,23 @@ if __name__ == '__main__':
     # # flush out the intial info line
     # translate_prog.stdout.readline()
 
+    cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                        'server.socket_port': 8080
+                       })
+
     conf = {
-        '/code': {
+        '/': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/Users/bobby/Downloads/'
+            'tools.staticdir.dir': '/home/stufs1/vgottipati/ICTC/App/UI',
+            'tools.staticdir.index': 'ictc.html',
         },
         '/Trump': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/Users/bobby/Pictures/ICTC/Trump'
+            'tools.staticdir.dir': '/home/stufs1/vgottipati/Images/Trump'
         },
         '/Clinton': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/Users/bobby/Pictures/ICTC/Clinton'
+            'tools.staticdir.dir': '/home/stufs1/vgottipati/Images/Clinton'
         }
     }
 
