@@ -12,7 +12,11 @@
                 <div class="col-lg-8 col-lg-offset-2">
                     <h1>Get Response From Trump/Clinton</h1>
                     <p class="lead">Type in a sentence and get a response from Trump/Clinton bot</p>
+                </div>
+            </div>
 
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
                     <form id="input_form" method="post" action="translate" role="form">
                         <div class="controls">
                             <div class="row">
@@ -44,14 +48,18 @@
                         </div>
                     </form>
 
-                    <br>
-                    <div id="response_wrapper" hidden="true">
-                        <h4 id="response_text" class="bubble"></h4>
-                        <div class="arrow-down"></div>
-                        <img id="response_img" class="img-responsive img-thumbnail"/>
-                    </div>
-                    
                     <br/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="response_wrapper" hidden="true">
+                                <h4 id="response_text" class="bubble"></h4>
+                                <div class="arrow-down"></div>
+                                <img id="response_img" class="img-responsive img-thumbnail"/>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+
                     <form id="feedback_form" method="post" action="feedback" role="form" hidden="true">
                         <div class="alert alert-success" role="alert">
                             Thanks for trying out our bot!
@@ -66,7 +74,8 @@
                                     <label>
                                         Does it sound like a valid response?
                                     </label>
-                                    <br/>
+                                </div>
+                                <div class="col-md-12">
                                     <label class="radio-inline">
                                         <input type="radio" name="optionsContent" value="1" required="true">
                                         Unrelated
@@ -79,27 +88,35 @@
                                         <input type="radio" name="optionsContent" value="3">
                                         Touche
                                     </label>
-                                    <br/>
-                                    <br/>
-                                    <div id='style_wrapper'>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div id='style_wrapper'>
+                                    <div class="col-md-12">
                                         <label>
                                             Does it sound like the way <span id="candidate_name">Trump</span> would say it?
                                         </label>
-                                        <br/>
+                                    </div>
+                                    <div class="col-md-4">
                                         <label class="radio-inline control-label">
                                             <input type="radio" name="optionsStyle" value="1" required="true">
                                             <img src="" class="img-responsive img-thumbnail" alt="Not at all" width="200" height="200">
                                         </label>
+                                    </div>
+                                    <div class="col-md-4">
                                         <label class="radio-inline control-label">
                                             <input type="radio" name="optionsStyle" value="2">
                                             <img src="" class="img-responsive img-thumbnail" alt="Slightly" width="200" height="200">
                                         </label>
+                                    </div>
+                                    <div class="col-md-4">
                                         <label class="radio-inline control-label">
                                             <input type="radio" name="optionsStyle" value="3">
                                             <img src="" class="img-responsive img-thumbnail" alt="Very" width="200" height="200">
                                         </label>
                                     </div>
-                                    <div id='suggestion_wrapper' hidden="true">
+                                    <div id='suggestion_wrapper' class="col-md-12" hidden="true">
                                         <br/>
                                         <label for="input_text">
                                             Response Suggestion
@@ -107,9 +124,9 @@
                                         <textarea id="suggestion_text" name="Suggestion" class="form-control" placeholder="A better response for your sentence" rows="4"></textarea>
                                     </div>
                                 </div>
-                                <br/>
-                                <br/>
-                                <br/>
+                            </div>
+                            <br/>
+                            <div class="row">
                                 <div class="col-md-12">
                                     <input type="submit" class="btn btn-success btn-send" value="Submit Feedback">
                                 </div>
