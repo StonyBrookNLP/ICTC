@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css" type="text/css">
     </head>
     <body>
         <div class="container">
@@ -44,11 +45,13 @@
                     </form>
 
                     <br>
-                    <img id="response_img" class="img-responsive img-thumbnail"/>
-                    <h4 id="response_text"></h4>
+                    <div id="response_wrapper" hidden="true">
+                        <h4 id="response_text" class="bubble"></h4>
+                        <div class="arrow-down"></div>
+                        <img id="response_img" class="img-responsive img-thumbnail"/>
+                    </div>
+                    
                     <br/>
-                    <br/>
-
                     <form id="feedback_form" method="post" action="feedback" role="form" hidden="true">
                         <div class="alert alert-success" role="alert">
                             Thanks for trying out our bot!

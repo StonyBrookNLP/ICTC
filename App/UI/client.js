@@ -17,12 +17,14 @@ $(function () {
                   });
 
                 $("#input_form :input").prop("disabled", true);
-                $("#response_img").attr("src", data['meme_url']).attr("alt", data['response']);
-                $("#response_text").html(data['response']);
-                $("#feedback_form").show();
 
+                response = data['response']
+                $("#response_img").attr("src", data['meme_url']).attr("alt", response);
+                $("#response_text").html(response);
+                $("#response_wrapper").show();
+                $("#feedback_form").show();
                 $('html, body').animate({
-                    scrollTop: $("#response_img").offset().top
+                    scrollTop: $("#response_wrapper").offset().top
                 });
             }
         });

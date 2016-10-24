@@ -1,0 +1,22 @@
+#response_wrapper {
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.bubble {
+  padding: 20px;
+  background: #377BB5;
+  color: #fff;
+  border-radius: 20px;
+  margin: 0;
+  display: inline-block;
+}
+
+.arrow-down {
+  width: 0; 
+  height: 0; 
+  margin: auto;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 20px solid #377BB5;
+}
