@@ -80,16 +80,8 @@ if __name__ == '__main__':
     conf = {
         '/': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/Users/bobby/Downloads',
-            'tools.staticdir.index': 'temp2.html',
-        },
-        '/Trump': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/Users/bobby/Pictures/ICTC/Trump'
-        },
-        '/Clinton': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/Users/bobby/Pictures/ICTC/Clinton'
+            'tools.staticdir.dir': '/Users/bobby/Downloads/static',
+            'tools.staticdir.index': 'ictc.html',
         }
     }
 
