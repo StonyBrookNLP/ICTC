@@ -41,9 +41,10 @@ $(function () {
         feedback_data['content_score'] = parseInt(content_score, 10);
         feedback_data['style_score'] = parseInt(style_score, 10);
         var suggestion_text = $("#suggestion_text").val();
-        if (suggestion_text) {
-            feedback_data['suggestion_text'] = suggestion_text;
+        if (!suggestion_text) {
+            suggestion_text = ""
         }
+        feedback_data['suggestion_text'] = suggestion_text;
         $.ajax({
             type: "POST",
             url: $(this).attr('action'),

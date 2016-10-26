@@ -1,7 +1,26 @@
 import cherrypy
 import atexit
+import sqlite3
 
 from subprocess import Popen, PIPE
+
+translate_prog = None
+con = None
+
+@atexit.register
+def cleanup():
+    global translate_prog
+    if translate_prog:
+        translate_prog.kill()
+        translate_prog = None
+        print 'Closed translation programs'
+    global con
+    if con:
+        con.close()
+        con = None
+        print 'Closed DB connection'
+    print 'Finished cleanup'
+
 
 class ICTC(object):
 
@@ -16,10 +35,10 @@ class ICTC(object):
 
         
         if optionsBot == 'c':
-          response = 'Clinton response'
+          response = message
           meme_url = 'https://i.imgflip.com/1cq4kr.jpg'
         else:
-          response = 'Trump response' 
+          response = message
           meme_url = 'https://i.imgflip.com/1cblat.jpg' 
 
         return_json = {
@@ -33,20 +52,19 @@ class ICTC(object):
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
     def feedback(self):
-        input_json = cherrypy.request.json
-        print input_json
+        feedback_data = cherrypy.request.json
+        print feedback_data
+        values = [
+            feedback_data['bot'],
+            feedback_data['inp_text'],
+            feedback_data['response_text'],
+            feedback_data['content_score'],
+            feedback_data['style_score'],
+            feedback_data['suggestion_text']
+            ]
+        con.execute('insert into Feedback values (?, ?, ?, ?, ?, ?)', values)
 
         return "Success"
-
-translate_prog = None
-feedbacks = []
-
-@atexit.register
-def kill_subprocesses():
-    if translate_prog:
-        translate_prog.kill()
-    else:
-        print 'no python prog'
 
 
 if __name__ == '__main__':
@@ -60,24 +78,36 @@ if __name__ == '__main__':
     # # flush out the intial info line
     # translate_prog.stdout.readline()
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0',
+    con = sqlite3.connect(
+        '/Users/bobby/Downloads/feedback.db', 
+        isolation_level=None, 
+        check_same_thread=False)
+    con.execute("create table if not exists Feedback(bot TEXT, input TEXT, response TEXT, content_score INTEGER, style_score INTEGER, suggestion TEXT)")
+
+    cherrypy.engine.subscribe('stop', cleanup)
+
+    cherrypy.config.update({'ser ver.socket_host': '0.0.0.0',
                         'server.socket_port': 8080
                        })
 
     conf = {
         '/': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/home/stufs1/vgottipati/ICTC/App/UI',
-            'tools.staticdir.index': 'ictc.html',
+            'tools.staticdir.dir': '/Users/bobby/Downloads',
+            'tools.staticdir.index': 'temp2.html',
         },
         '/Trump': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/home/stufs1/vgottipati/Images/Trump'
+            'tools.staticdir.dir': '/Users/bobby/Pictures/ICTC/Trump'
         },
         '/Clinton': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/home/stufs1/vgottipati/Images/Clinton'
+            'tools.staticdir.dir': '/Users/bobby/Pictures/ICTC/Clinton'
         }
     }
 
-    cherrypy.quickstart(ICTC(), '/', conf)
+    try:
+        cherrypy.quickstart(ICTC(), '/', conf)
+    except:
+        cleanup()
+        raise
