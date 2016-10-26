@@ -33,20 +33,7 @@ class ICTC(object):
         # translate_prog.stdin.flush()
         # op_text = translate_prog.stdout.readline()[1:] .strip()
 
-        
-        if optionsBot == 'c':
-          response = message
-          meme_url = 'https://i.imgflip.com/1cq4kr.jpg'
-        else:
-          response = message
-          meme_url = 'https://i.imgflip.com/1cblat.jpg' 
-
-        return_json = {
-          'response': response,
-          'meme_url': meme_url
-        }
-
-        return return_json
+        return message
 
     @cherrypy.expose
     @cherrypy.tools.json_out()

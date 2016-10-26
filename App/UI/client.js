@@ -4,7 +4,7 @@ $(function () {
             type: "POST",
             url: $(this).attr('action'),
             data: $(this).serialize(),
-            success: function (data)
+            success: function (response)
             {
                 // customize feedback form for the candidate
                 var bot = $("#input_form input[name=optionsBot]:checked").val();
@@ -18,8 +18,9 @@ $(function () {
 
                 $("#input_form :input").prop("disabled", true);
 
-                response = data['response']
-                $("#response_img").attr("src", data['meme_url']).attr("alt", response);
+                $("#response_img")
+                    .attr("src", candidate + '/meme.jpg')
+                    .attr("alt", response);
                 $("#response_text").html(response);
                 $("#response_wrapper").show();
                 $("#feedback_form").show();
