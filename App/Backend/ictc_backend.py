@@ -73,10 +73,6 @@ if __name__ == '__main__':
 
     cherrypy.engine.subscribe('stop', cleanup)
 
-    cherrypy.config.update({'ser ver.socket_host': '0.0.0.0',
-                        'server.socket_port': 8080
-                       })
-
     conf = {
         '/': {
             'tools.staticdir.on': True,
@@ -84,6 +80,10 @@ if __name__ == '__main__':
             'tools.staticdir.index': 'ictc.html',
         }
     }
+
+    cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                        'server.socket_port': 8080
+                       })
 
     try:
         cherrypy.quickstart(ICTC(), '/', conf)
