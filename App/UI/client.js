@@ -11,17 +11,26 @@ $(function () {
                 var candidate = bot == 't' ? 'Trump' : 'Clinton';
 
                 $("#candidate_name").html(candidate);
+
+                $("#input_form :input").prop("disabled", true);
+
+                $("#response_header").html(candidate + '\'s Response');
+                $("#response_img")
+                    .attr("src", candidate + '/meme.jpg')
+                    .attr("alt", response);
+                $("#response_text").html(response);
                 
                 $("#style_score_wrapper img").each(function(i) {
                     $(this).attr("src", candidate + '/' + (i+1) + '.png');
                   });
 
-                $("#input_form :input").prop("disabled", true);
+                if (bot == 't') {
+                    $("#content_question").html("Was Trump's statement about the same thing as what you typed for Clinton?");
+                } else {
+                    $("#content_question").html("Was Clinton's statement about the same thing as what you typed for Trump?");
+                }
+                
 
-                $("#response_img")
-                    .attr("src", candidate + '/meme.jpg')
-                    .attr("alt", response);
-                $("#response_text").html(response);
                 $("#response_wrapper").show();
                 $("#feedback_form").show();
                 $('html, body').animate({

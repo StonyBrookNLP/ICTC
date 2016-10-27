@@ -1,3 +1,23 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 120px;
+}
+
+.footer {
+  padding: 50px 0 0 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 120px;
+}
+
+
 #response_wrapper {
   text-align: center;
   text-transform: capitalize;
@@ -19,4 +39,9 @@
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-top: 20px solid #377BB5;
+}
+
+#hlab_img {
+  float: left;
+  margin: 0 10px;
 }
