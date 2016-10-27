@@ -11,8 +11,8 @@ $(function () {
                 var candidate = bot == 't' ? 'Trump' : 'Clinton';
 
                 $("#candidate_name").html(candidate);
-
-                $("#style_wrapper img").each(function(i) {
+                
+                $("#style_score_wrapper img").each(function(i) {
                     $(this).attr("src", candidate + '/' + (i+1) + '.png');
                   });
 

@@ -58,8 +58,8 @@
                             </div>
                         </div>
                     </div>
-                    <br/>
 
+                    <br/>
                     <form id="feedback_form" method="post" action="feedback" role="form" hidden="true">
                         <div class="alert alert-success" role="alert">
                             Thanks for trying out our bot!
@@ -70,29 +70,7 @@
                         </div>
                         <div class="controls">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <label>
-                                        Does it sound like a valid response?
-                                    </label>
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="radio-inline">
-                                        <input type="radio" name="optionsContent" value="1" required="true">
-                                        Unrelated
-                                    </label>
-                                    <label class="radio-inline">
-                                        <input type="radio" name="optionsContent" value="2">
-                                        Bland
-                                    </label>
-                                    <label class="radio-inline">
-                                        <input type="radio" name="optionsContent" value="3">
-                                        Touche
-                                    </label>
-                                </div>
-                            </div>
-                            <br/>
-                            <div class="row">
-                                <div id='style_wrapper'>
+                                <div id='style_score_wrapper'>
                                     <div class="col-md-12">
                                         <label>
                                             Does it sound like the way <span id="candidate_name">Trump</span> would say it?
@@ -116,13 +94,39 @@
                                             <img src="" class="img-responsive img-thumbnail" alt="Very" width="200" height="200">
                                         </label>
                                     </div>
-                                    <div id='suggestion_wrapper' class="col-md-12" hidden="true">
-                                        <br/>
-                                        <label for="input_text">
-                                            Response Suggestion
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div id='content_score_wrapper'>
+                                    <div class="col-md-12">
+                                        <label>
+                                            Does it sound like a valid response?
                                         </label>
-                                        <textarea id="suggestion_text" name="Suggestion" class="form-control" placeholder="A better response for your sentence" rows="4"></textarea>
                                     </div>
+                                    <div class="col-md-12">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optionsContent" value="1" required="true">
+                                            Unrelated
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optionsContent" value="2">
+                                            Bland
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optionsContent" value="3">
+                                            Touche
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id='suggestion_wrapper' class="col-md-12" hidden="true">
+                                    <br/>
+                                    <label for="input_text">
+                                        Response Suggestion
+                                    </label>
+                                    <textarea id="suggestion_text" name="Suggestion" class="form-control" placeholder="A better response for your sentence" rows="4"></textarea>
                                 </div>
                             </div>
                             <br/>
@@ -144,10 +148,10 @@
                                 <div class="modal-body">
                                     <p>You Rock!</p>
                                 </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
                             </div>
-                          </div>
                         </div>
                     </div>
 
