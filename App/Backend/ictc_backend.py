@@ -4,16 +4,17 @@ import sqlite3
 
 from subprocess import Popen, PIPE
 
-translate_prog = None
+trump_bot = None
+clinton_bot = None
 con = None
 
 @atexit.register
 def cleanup():
-    global translate_prog
-    if translate_prog:
-        translate_prog.kill()
-        translate_prog = None
-        print 'Closed translation programs'
+    global trump_bot
+    if trump_bot:
+        trump_bot.kill()
+        trump_bot = None
+        print 'Closed Trump bot'
     global con
     if con:
         con.close()
@@ -27,13 +28,12 @@ class ICTC(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def translate(self, message, optionsBot):
-        print message, optionsBot
 
-        # translate_prog.stdin.write(text + '\n')
-        # translate_prog.stdin.flush()
-        # op_text = translate_prog.stdout.readline()[1:] .strip()
+        trump_bot.stdin.write(message + '\n')
+        trump_bot.stdin.flush()
+        response = trump_bot.stdout.readline()[1:].strip()
 
-        return message
+        return response
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -55,18 +55,19 @@ class ICTC(object):
 
 
 if __name__ == '__main__':
-    cmd = '''
-          python tensorflow/tensorflow/models/rnn/translate/translate.py --decode --data_dir tensorflow/tensorflow/models/rnn/translate/Tweet_Latest --train_dir tensorflow/tensorflow/models/rnn/translate/checkpoint_latest --size=256 --num_layers=1 --steps_per_checkpoint=50
-          '''
+    #home_dir = '/Users/bobby/Downloads'
+    home_dir = '/home/stufs1/vgottipati'
+    translate_folder = home_dir + '/tensorflow/tensorflow/models/rnn/translate'
+    translate_args = '--decode --data_dir {0} --train_dir {1} --size=256 --num_layers=1 --steps_per_checkpoint=50'
 
-    args = cmd.split()
-    # translate_prog = Popen(args, shell=False, stdin=PIPE, stdout=PIPE)
-
-    # # flush out the intial info line
-    # translate_prog.stdout.readline()
+    trump_args = (translate_folder + '/trump_data_dir', translate_folder + '/trump_checkpoint_dir')
+    trump_bot_cmd = 'python ' + translate_folder + '/translate.py ' + (translate_args.format(*trump_args))
+    trump_bot = Popen(trump_bot_cmd.split(), shell=False, stdin=PIPE, stdout=PIPE)
+    # flush out the intial info line
+    trump_bot.stdout.readline()
 
     con = sqlite3.connect(
-        '/Users/bobby/Downloads/feedback.db', 
+        home_dir + '/feedback.db', 
         isolation_level=None, 
         check_same_thread=False)
     con.execute("create table if not exists Feedback(bot TEXT, input TEXT, response TEXT, content_score INTEGER, style_score INTEGER, suggestion TEXT)")
@@ -75,14 +76,15 @@ if __name__ == '__main__':
 
     conf = {
         '/': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': '/Users/bobby/Downloads/static',
-            'tools.staticdir.index': 'ictc.html',
+            'tools.staticdir.on'    : True,
+            'tools.staticdir.dir'   : home_dir + '/Static',
+            'tools.staticdir.index' : 'ictc.html'
         }
     }
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                        'server.socket_port': 8080
+    cherrypy.config.update({
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': 8080
                        })
 
     try:
