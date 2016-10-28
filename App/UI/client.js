@@ -6,30 +6,8 @@ $(function () {
             data: $(this).serialize(),
             success: function (response)
             {
-                // customize feedback form for the candidate
-                var bot = $("#input_form input[name=optionsBot]:checked").val();
-                var candidate = bot == 't' ? 'Trump' : 'Clinton';
-
-                $("#candidate_name").html(candidate);
-
-                $("#input_form :input").prop("disabled", true);
-
-                $("#response_header").html(candidate + '\'s Response');
-                $("#response_img")
-                    .attr("src", candidate + '/meme.jpg')
-                    .attr("alt", response);
+                $("#response_img").attr("alt", response);
                 $("#response_text").html(response);
-                
-                $("#style_score_wrapper img").each(function(i) {
-                    $(this).attr("src", candidate + '/' + (i+1) + '.png');
-                  });
-
-                if (bot == 't') {
-                    $("#content_question").html("Was Trump's statement about the same thing as what you typed for Clinton?");
-                } else {
-                    $("#content_question").html("Was Clinton's statement about the same thing as what you typed for Trump?");
-                }
-                
 
                 $("#response_wrapper").show();
                 $("#feedback_form").show();
@@ -38,6 +16,27 @@ $(function () {
                 });
             }
         });
+
+        $("#input_form :input").prop("disabled", true);
+
+        // customize feedback form for the candidate
+        var bot = $("#input_form input[name=optionsBot]:checked").val();
+        var candidate = bot == 't' ? 'Trump' : 'Clinton';
+
+        $("#candidate_name").html(candidate);
+
+        $("#response_header").html(candidate + '\'s Response');
+        $("#response_img").attr("src", candidate + '/meme.jpg');
+        $("#style_score_wrapper img").each(function(i) {
+            $(this).attr("src", candidate + '/' + (i+1) + '.png');
+          });
+
+        if (bot == 't') {
+            $("#content_question").html("Was Trump's statement about the same thing as what you typed for Clinton?");
+        } else {
+            $("#content_question").html("Was Clinton's statement about the same thing as what you typed for Trump?");
+        }
+
         e.preventDefault();
     });
 
