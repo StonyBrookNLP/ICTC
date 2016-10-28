@@ -15,6 +15,11 @@ def cleanup():
         trump_bot.kill()
         trump_bot = None
         print 'Closed Trump bot'
+    global clinton_bot
+    if clinton_bot:
+        clinton_bot.kill()
+        clinton_bot = None
+        print 'Closed Clinton bot'
     global con
     if con:
         con.close()
@@ -28,11 +33,14 @@ class ICTC(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def translate(self, message, optionsBot):
+        if optionsBot == 'c':
+            bot = clinton_bot
+        else:
+            bot = trump_bot
 
-        trump_bot.stdin.write(message + '\n')
-        trump_bot.stdin.flush()
-        response = trump_bot.stdout.readline()[1:].strip()
-
+        bot.stdin.write(message + '\n')
+        bot.stdin.flush()
+        response = bot.stdout.readline()[1:].strip()
         return response
 
     @cherrypy.expose
@@ -65,6 +73,14 @@ if __name__ == '__main__':
     trump_bot = Popen(trump_bot_cmd.split(), shell=False, stdin=PIPE, stdout=PIPE)
     # flush out the intial info line
     trump_bot.stdout.readline()
+    print 'Started Trump bot'
+
+    clinton_args = (translate_folder + '/clinton_data_dir', translate_folder + '/clinton_checkpoint_dir')
+    clinton_bot_cmd = 'python ' + translate_folder + '/translate.py ' + (translate_args.format(*clinton_args))
+    clinton_bot = Popen(clinton_bot_cmd.split(), shell=False, stdin=PIPE, stdout=PIPE)
+    # flush out the intial info line
+    clinton_bot.stdout.readline()
+    print 'Started Clinton bot'
 
     con = sqlite3.connect(
         home_dir + '/feedback.db', 
