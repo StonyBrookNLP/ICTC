@@ -8,6 +8,17 @@ body {
   margin-bottom: 120px;
 }
 
+[contenteditable] {
+  padding:12px;
+}
+
+[data-placeholder]:empty:before {
+  content: attr(data-placeholder);
+  color: #d0d0d0;
+  cursor: text;
+  font-style: italic;
+}
+
 .alert {
   margin: 0 0 5px 0;
   padding: 10px;
@@ -22,27 +33,47 @@ body {
   height: 120px;
 }
 
-
-#response_wrapper {
-  text-align: center;
-}
-
 .bubble {
+  position:relative;
   padding: 20px;
   background: #377BB5;
   color: #fff;
   border-radius: 20px;
-  margin: 0;
+  margin: 0 0 1em 0;
   display: inline-block;
+  outline: none;
 }
 
-.arrow-down {
-  width: 0; 
-  height: 0; 
-  margin: auto;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 20px solid #377BB5;
+.bubble.left {
+  margin-left: 40px;
+}
+
+.bubble.left:after {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  display: block;
+  top: 20px;
+  left: -40px; /* value = - border-left-width - border-right-width */
+  bottom: auto;
+  border-width: 15px 40px 0 0; /* vary these values to change the angle of the vertex */
+  border-color: transparent #377BB5;
+}
+
+.bubble.right {
+  margin-right: 40px;
+}
+
+.bubble.right:after {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  display: block;
+  top: 20px;
+  right: -40px; /* value = - border-left-width - border-right-width */
+  bottom: auto;
+  border-width: 15px 0 0 40px; /* vary these values to change the angle of the vertex */
+  border-color: transparent #377BB5;
 }
 
 #hlab_img {

@@ -1,50 +1,105 @@
 $(function () {
+
+    $('#input_bubble').hide();
+    $('#response_bubble').hide();
+
+    $("#input_form input[name=optionsBot]").on('change', function(e) {
+        var bot = $("#input_form input[name=optionsBot]:checked").val();
+
+        if (bot == 't') {
+            $("#input_bubble")
+                .removeClass()
+                .addClass( "bubble left" )
+                .css('float', 'left')
+                .attr('data-placeholder', "Type in argument for Trump as Clinton")
+                .text("")
+                .show()
+                .focus();
+        } else {
+            $("#input_bubble")
+                .removeClass()
+                .addClass( "bubble right" )
+                .css('float', 'right')
+                .attr('data-placeholder', "Type in argument for Clinton as Trump")
+                .text("")
+                .show()
+                .focus();
+        }
+    });
+
+    var submitForm = function (e) {
+        if (e.which == 13) {
+            $(this).closest('form').submit();
+            return false;
+        }
+    };
+
+    $('.input').keypress(submitForm);
+    $('#input_bubble').keypress(submitForm);
+
     $('#input_form').on('submit', function(e) {
+        e.preventDefault();
+
+        var inp_text = $("#input_bubble").text();
+        if (!inp_text) {
+            alert("Please enter an argument for the other side");
+            return;
+        }
+        var bot = $("#input_form input[name=optionsBot]:checked").val();
+        var post_data = {
+            message: inp_text,
+            optionsBot: bot
+        };
         $.ajax({
             type: "POST",
             url: $(this).attr('action'),
-            data: $(this).serialize(),
+            data: post_data,
             success: function (response)
             {
-                $("#response_img").attr("alt", response);
-                $("#response_text").html(response);
 
-                $("#response_wrapper").show();
+                if (bot == 't') {
+                    $("#response_bubble")
+                        .removeClass()
+                        .addClass( "bubble right" )
+                        .css('float', 'right')
+                        .html(response)
+                        .show();
+                } else {
+                    $("#response_bubble")
+                        .removeClass()
+                        .addClass( "bubble left" )
+                        .css('float', 'left')
+                        .html(response)
+                        .show();
+                }
+
                 $("#feedback_form").show();
-                $('html, body').animate({
-                    scrollTop: $("#response_wrapper").offset().top
-                });
             }
         });
 
         $("#input_form :input").prop("disabled", true);
+        $('#input_bubble').attr('contenteditable', 'false');
 
         // customize feedback form for the candidate
-        var bot = $("#input_form input[name=optionsBot]:checked").val();
         var candidate = bot == 't' ? 'Trump' : 'Clinton';
-
         $("#candidate_name").html(candidate);
 
-        $("#response_header").html(candidate + '\'s Response');
-        $("#response_img").attr("src", candidate + '/meme.jpg');
-        $("#style_score_wrapper img").each(function(i) {
-            $(this).attr("src", candidate + '/' + (i+1) + '.png');
+        $("#feedback_form .candidate-name").each(function(i) {
+            $(this).text(candidate);
           });
-
         if (bot == 't') {
             $("#content_question").html("Was Trump's response about the same topic as what you typed for Clinton?");
         } else {
             $("#content_question").html("Was Clinton's response about the same topic as what you typed for Trump?");
         }
 
-        e.preventDefault();
     });
 
     $('#feedback_form').on('submit', function(e) {
         var feedback_data = {}
         feedback_data['bot'] = $("#input_form input[name=optionsBot]:checked").val();
-        feedback_data['inp_text'] = $("#input_text").val();
-        feedback_data['response_text'] = $("#response_text").text();
+        feedback_data['inp_text'] = $("#input_bubble").text();
+        feedback_data['response_text'] = $("#response_bubble").text();
         var content_score = $("#feedback_form input[name=optionsContent]:checked").val();
         var style_score = $("#feedback_form input[name=optionsStyle]:checked").val();
         feedback_data['content_score'] = parseInt(content_score, 10);
@@ -88,5 +143,9 @@ $(function () {
 
     $('#thanks_modal').on('hidden.bs.modal', function(e) {
         window.location.reload();
+    });
+
+    $('#thanks_modal').on('shown.bs.modal', function () {
+        $('#modal_close_button').focus();
     });
 });

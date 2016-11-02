@@ -8,9 +8,10 @@
     </head>
     <body>
         <div class="container">
-            <div class="row">
+            <div class="row text-center">
                 <div class="col-lg-8 col-lg-offset-2">
-                    <h1>Get Response From Trump/Clinton bot</h1>
+                    <h1>Presidential bot debate</h1>
+                    <h3>Argue as:</h1>
                 </div>
             </div>
 
@@ -19,41 +20,34 @@
                     <form id="input_form" method="post" action="translate" role="form">
                         <div class="controls">
                             <div class="row">
+                                <div class="col-md-3">
+                                <label class="radio control-label">
+                                    <input type="radio" name="optionsBot" value="t">
+                                    Clinton to Trump-a-bot
+                                    <img id="clinton_podium_img" class="img-responsive img-thumbnail" src="Clinton/podium.jpg" width="200" height="200"/>
+                                </label>
+                                </div>
+                                <div class="col-md-6">
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        <textarea id="input_text" name="message" class="form-control" placeholder="Type in a message" rows="4" required="required"></textarea>
-                                    </div>
+                                <div id="input_bubble" class="bubble" contenteditable="true" hidden="true"></div>
                                 </div>
                                 <div class="col-md-12">
-                                    <label>
-                                        Speak as:&ensp;&ensp;
-                                    </label>
-                                    <label class="radio-inline">
-                                        <input type="radio" name="optionsBot" value="t" checked>
-                                        Clinton to Trump bot
-                                    </label>
-                                    <label class="radio-inline">
-                                        <input type="radio" name="optionsBot" value="c">
-                                        Trump to Clinton bot
-                                    </label>
+                                <div id="response_bubble" class="bubble" hidden="true"></div>
                                 </div>
-                                <div class="col-md-12">
-                                    <input type="submit" class="btn btn-success btn-send" value="Submit">
+                                </div>
+                                <div class="col-md-3">
+                                <label class="radio control-label">
+                                    <input type="radio" name="optionsBot" value="c">
+                                    Trump to Clinton-a-bot
+                                    <img id="trump_podium_img" class="img-responsive img-thumbnail" src="Trump/podium.jpg" width="200" height="200"/>
+                                </label>
+                                </div>
+                                <div class="col-md-12 center-block">
+                                    <input type="submit" class="btn btn-success btn-send center-block" value="Argue">
                                 </div>
                             </div>
                         </div>
                     </form>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div id="response_wrapper" hidden="true">
-                                <h2 id="response_header"></h4>
-                                <h4 id="response_text" class="bubble"></h4>
-                                <div class="arrow-down"></div>
-                                <img id="response_img" class="img-responsive img-thumbnail" width="400" height="400"/>
-                            </div>
-                        </div>
-                    </div>
 
                     <form id="feedback_form" method="post" action="feedback" role="form" hidden="true">
                         <div class="alert alert-warning" role="alert">
@@ -73,25 +67,20 @@
                                 <div id='style_score_wrapper'>
                                     <div class="col-md-12">
                                         <label>
-                                            Does it sound like the way <span id="candidate_name">Trump</span> would say it?
+                                            Does the response sound like the way <span class="candidate-name"></span> would say it?
                                         </label>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-12">
                                         <label class="radio-inline control-label">
-                                            <input type="radio" name="optionsStyle" value="1" required="true">
-                                            <img src="" class="img-responsive img-thumbnail" alt="Not at all" width="150" height="150">
+                                            <input type="radio" name="optionsStyle" value="1" required="true">Not at all
                                         </label>
-                                    </div>
-                                    <div class="col-md-3">
                                         <label class="radio-inline control-label">
                                             <input type="radio" name="optionsStyle" value="2">
-                                            <img src="" class="img-responsive img-thumbnail" alt="Slightly" width="150" height="150">
+                                            Slightly <span class="candidate-name"></span> 
                                         </label>
-                                    </div>
-                                    <div class="col-md-3">
                                         <label class="radio-inline control-label">
                                             <input type="radio" name="optionsStyle" value="3">
-                                            <img src="" class="img-responsive img-thumbnail" alt="Very" width="150" height="150">
+                                            Very <span class="candidate-name"></span> 
                                         </label>
                                     </div>
                                 </div>
@@ -101,7 +90,6 @@
                                 <div id='content_score_wrapper'>
                                     <div class="col-md-12">
                                         <label id='content_question'>
-                                            Is Trump's statement about the same thing as what you typed for Clinton?
                                         </label>
                                     </div>
                                     <div class="col-md-12">
@@ -149,7 +137,7 @@
                                     <p>You Rock!</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    <button type="button" id="modal_close_button" class="btn btn-primary" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
