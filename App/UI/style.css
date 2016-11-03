@@ -8,6 +8,10 @@ body {
   margin-bottom: 120px;
 }
 
+.wait, .wait * {
+  cursor: wait;
+}
+
 [contenteditable] {
   padding:12px;
 }

@@ -11,7 +11,7 @@ $(function () {
                 .removeClass()
                 .addClass( "bubble left" )
                 .css('float', 'left')
-                .attr('data-placeholder', "Type in argument for Trump as Clinton")
+                .attr('data-placeholder', "Type in something Clinton would say to see what Trump-a-bot says back")
                 .text("")
                 .show()
                 .focus();
@@ -20,7 +20,7 @@ $(function () {
                 .removeClass()
                 .addClass( "bubble right" )
                 .css('float', 'right')
-                .attr('data-placeholder', "Type in argument for Clinton as Trump")
+                .attr('data-placeholder', "Type in something Trump would say to see what Clinton-a-bot says back")
                 .text("")
                 .show()
                 .focus();
@@ -45,7 +45,23 @@ $(function () {
             alert("Please enter an argument for the other side");
             return;
         }
+        $('body').addClass('wait');
         var bot = $("#input_form input[name=optionsBot]:checked").val();
+        if (bot == 't') {
+            $("#response_bubble")
+                .removeClass()
+                .addClass( "bubble right" )
+                .css('float', 'right')
+                .html('Trump-a-bot processing....')
+                .show();
+        } else {
+            $("#response_bubble")
+                .removeClass()
+                .addClass( "bubble left" )
+                .css('float', 'left')
+                .html('Clinton-a-bot processing....')
+                .show();
+        }
         var post_data = {
             message: inp_text,
             optionsBot: bot
@@ -56,23 +72,10 @@ $(function () {
             data: post_data,
             success: function (response)
             {
+                $('body').removeClass('wait');
+                $("#response_bubble").html(response);
 
-                if (bot == 't') {
-                    $("#response_bubble")
-                        .removeClass()
-                        .addClass( "bubble right" )
-                        .css('float', 'right')
-                        .html(response)
-                        .show();
-                } else {
-                    $("#response_bubble")
-                        .removeClass()
-                        .addClass( "bubble left" )
-                        .css('float', 'left')
-                        .html(response)
-                        .show();
-                }
-
+                $("#translate_btn").hide();
                 $("#feedback_form").show();
             }
         });
