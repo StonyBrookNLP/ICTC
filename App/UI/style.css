@@ -84,3 +84,14 @@ body {
   float: left;
   margin: 0 10px;
 }
+
+@media screen and (max-width: 768px) {
+  #input_form img {
+    max-width: 70px;
+    height: auto;
+  }
+}
+
+#input_form label {
+    display: inline-block;
+}

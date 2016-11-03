@@ -3,13 +3,17 @@ $(function () {
     $('#input_bubble').hide();
     $('#response_bubble').hide();
 
+    if ($(window).width() <= 768) {
+        $("#bubble_wrapper").before($("#trump_opt_wrapper"));
+    }
+
     $("#input_form input[name=optionsBot]").on('change', function(e) {
         var bot = $("#input_form input[name=optionsBot]:checked").val();
 
         if (bot == 't') {
             $("#input_bubble")
                 .removeClass()
-                .addClass( "bubble left" )
+                .addClass("bubble left")
                 .css('float', 'left')
                 .attr('data-placeholder', "Type in something Clinton would say to see what Trump-a-bot says back")
                 .text("")
@@ -18,7 +22,7 @@ $(function () {
         } else {
             $("#input_bubble")
                 .removeClass()
-                .addClass( "bubble right" )
+                .addClass("bubble right")
                 .css('float', 'right')
                 .attr('data-placeholder', "Type in something Trump would say to see what Clinton-a-bot says back")
                 .text("")

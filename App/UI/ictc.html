@@ -20,29 +20,29 @@
                     <form id="input_form" method="post" action="translate" role="form">
                         <div class="controls">
                             <div class="row">
-                                <div class="col-md-3">
-                                <label class="radio control-label">
+                                <div id="clinton_opt_wrapper" class="col-md-3 col-xs-6">
+                                <label class="radio-inline control-label">
                                     <input type="radio" name="optionsBot" value="t">
-                                    Clinton to Trump-a-bot
+                                    Clinton
                                     <img id="clinton_podium_img" class="img-responsive img-thumbnail" src="Clinton/podium.jpg" width="200" height="200"/>
                                 </label>
                                 </div>
-                                <div class="col-md-6">
-                                <div class="col-md-12">
-                                <div id="input_bubble" class="bubble" contenteditable="true" hidden="true"></div>
+                                <div id="bubble_wrapper" class="col-md-6 col-xs-12">
+                                    <div class="col-md-12 col-xs-12">
+                                    <div id="input_bubble" class="bubble" contenteditable="true" hidden="true"></div>
+                                    </div>
+                                    <div class="col-md-12 col-xs-12">
+                                    <div id="response_bubble" class="bubble" hidden="true"></div>
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                                <div id="response_bubble" class="bubble" hidden="true"></div>
-                                </div>
-                                </div>
-                                <div class="col-md-3">
-                                <label class="radio control-label">
+                                <div id="trump_opt_wrapper" class="col-md-3 col-xs-6">
+                                <label class="radio-inline control-label">
                                     <input type="radio" name="optionsBot" value="c">
-                                    Trump to Clinton-a-bot
+                                    Trump
                                     <img id="trump_podium_img" class="img-responsive img-thumbnail" src="Trump/podium.jpg" width="200" height="200"/>
                                 </label>
                                 </div>
-                                <div class="col-md-12 center-block">
+                                <div class="col-md-12 col-xs-12 center-block">
                                     <input type="submit" id="translate_btn" class="btn btn-success btn-send center-block" value="Argue">
                                 </div>
                             </div>
