@@ -4,8 +4,10 @@ $(function () {
     $('#response_bubble').hide();
     $('#random_tweet_btn').hide();
 
-    if (window.location.search)
+    if (window.location.search) {
         $('#thanks_div').show();
+        window.history.pushState(null, "", window.location.origin);
+    }
 
     var mobile = false;
     if ($(window).width() <= 768) {
@@ -22,6 +24,14 @@ $(function () {
     "why don't we ask the navy seals who killed bin laden? they don't seem to be happy with obama claiming credit. all he did is say .",
     "what do african-americans and hispanics have to lose by going with me. look at the poverty, crime and educational statistics. i will fix it!"
     ];
+
+    $('#input_bubble').on('input', function() {
+        if ($(this).text()) {
+            $('#random_tweet_btn').hide();
+        } else {
+            $('#random_tweet_btn').show();
+        }
+    });
 
     $("#input_form input[name=optionsBot]").on('change', function(e) {
         var bot = $("#input_form input[name=optionsBot]:checked").val();
@@ -77,9 +87,11 @@ $(function () {
     $('.input').keypress(submitForm);
     $('#input_bubble').keypress(submitForm);
 
+    var inp_text = "";
+    var response_text = "";
     $('#input_form').on('submit', function(e) {
         e.preventDefault();
-        var inp_text = $("#input_bubble").text();
+        inp_text = $("#input_bubble").text();
         if (!inp_text) {
             alert("Please enter an argument for the other side");
             return;
@@ -115,6 +127,7 @@ $(function () {
             data: post_data,
             success: function (response)
             {
+                response_text = response;
                 $('body').removeClass('wait');
                 $("#response_bubble").html(candidate + "-a-bot: " + response);
 
@@ -144,8 +157,8 @@ $(function () {
         $("#feedback_form :input").prop("disabled", true);
         var feedback_data = {}
         feedback_data['bot'] = $("#input_form input[name=optionsBot]:checked").val();
-        feedback_data['inp_text'] = $("#input_bubble").text();
-        feedback_data['response_text'] = $("#response_bubble").text();
+        feedback_data['inp_text'] = inp_text;
+        feedback_data['response_text'] = response_text;
         var content_score = $("#feedback_form input[name=optionsContent]:checked").val();
         var style_score = $("#feedback_form input[name=optionsStyle]:checked").val();
         feedback_data['content_score'] = parseInt(content_score, 10);
