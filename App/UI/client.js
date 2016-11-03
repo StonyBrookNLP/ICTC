@@ -2,12 +2,23 @@ $(function () {
 
     $('#input_bubble').hide();
     $('#response_bubble').hide();
+    $('#random_tweet_btn').hide();
 
     var mobile = false;
     if ($(window).width() <= 768) {
         mobile = true;
         $("#bubble_wrapper").before($("#trump_opt_wrapper"));
     }
+
+    clinton_tweets = [
+    "latest reckless idea from trump: gut rules on wall street, and leave middle-class families out to dry",
+    "climate change is real, and threatens us all."
+    ];
+
+    trump_tweets = [
+    "why don't we ask the navy seals who killed bin laden? they don't seem to be happy with obama claiming credit. all he did is say .",
+    "what do african-americans and hispanics have to lose by going with me. look at the poverty, crime and educational statistics. i will fix it!"
+    ];
 
     $("#input_form input[name=optionsBot]").on('change', function(e) {
         var bot = $("#input_form input[name=optionsBot]:checked").val();
@@ -21,6 +32,9 @@ $(function () {
                 .text("")
                 .show()
                 .focus();
+            $('#random_tweet_btn')
+                .html("OR Try a random Clinton tweet")
+                .show();
         } else {
             $("#input_bubble")
                 .removeClass()
@@ -30,7 +44,11 @@ $(function () {
                 .text("")
                 .show()
                 .focus();
+            $('#random_tweet_btn')
+                .html("OR Try a random Trump tweet")
+                .show();
         }
+
     });
 
     var submitForm = function (e) {
@@ -40,12 +58,25 @@ $(function () {
         }
     };
 
+    $("#random_tweet_btn").click( function(){
+        var bot = $("#input_form input[name=optionsBot]:checked").val();
+        var idx = Math.floor(Math.random() * (2));
+        if (bot == 't') {
+            $("#input_bubble").text(clinton_tweets[idx]);
+        } else {
+            $("#input_bubble").text(trump_tweets[idx]);
+        }
+        
+        $(this).closest('form').submit();
+        return false;
+    }); 
+
     $('.input').keypress(submitForm);
     $('#input_bubble').keypress(submitForm);
 
     $('#input_form').on('submit', function(e) {
         e.preventDefault();
-
+        $('#random_tweet_btn').hide();
         var inp_text = $("#input_bubble").text();
         if (!inp_text) {
             alert("Please enter an argument for the other side");
