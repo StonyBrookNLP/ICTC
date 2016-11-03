@@ -9,6 +9,10 @@
     <body>
         <div class="container">
             <div class="row text-center">
+                <div id="thanks_div" class="alert alert-success" role="alert" hidden="true">
+                    <h5>Thanks for your feedback!
+                        You're helping us improve research on bridging ideological divides.</h5>
+                </div>
                 <div class="col-lg-8 col-lg-offset-2">
                     <h1>Presidential bot debate</h1>
                     <h3>Argue as:</h1>
@@ -22,7 +26,7 @@
                             <div class="row">
                                 <div id="clinton_opt_wrapper" class="col-md-3 col-xs-6">
                                 <label class="radio-inline control-label">
-                                    <input type="radio" name="optionsBot" value="t">
+                                    <input type="radio" name="optionsBot" value="t" required="true">
                                     Clinton
                                     <img id="clinton_podium_img" class="img-responsive img-thumbnail" src="Clinton/podium.jpg" width="200" height="200"/>
                                 </label>
@@ -115,9 +119,9 @@
                                 <div id='suggestion_wrapper' class="col-md-12" hidden="true">
                                     <br/>
                                     <label for="input_text">
-                                        Response Suggestion
+                                        What do you think <span class="candidate-name"></span> would say instead?
                                     </label>
-                                    <textarea id="suggestion_text" name="Suggestion" class="form-control" placeholder="A better response for your sentence" rows="4"></textarea>
+                                    <textarea id="suggestion_text" name="Suggestion" class="form-control" placeholder="A better response for your argument" rows="4"></textarea>
                                 </div>
                             </div>
                             <br/>
@@ -128,23 +132,6 @@
                             </div>
                         </div>
                     </form>
-
-                    <div class="modal fade" id="thanks_modal" role="dialog">
-                        <div class="modal-dialog modal-sm">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Thanks for your feedback.</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <p>You Rock!</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" id="modal_close_button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
             </div>

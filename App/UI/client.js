@@ -4,6 +4,9 @@ $(function () {
     $('#response_bubble').hide();
     $('#random_tweet_btn').hide();
 
+    if (window.location.search)
+        $('#thanks_div').show();
+
     var mobile = false;
     if ($(window).width() <= 768) {
         mobile = true;
@@ -76,13 +79,13 @@ $(function () {
 
     $('#input_form').on('submit', function(e) {
         e.preventDefault();
-        $('#random_tweet_btn').hide();
         var inp_text = $("#input_bubble").text();
         if (!inp_text) {
             alert("Please enter an argument for the other side");
             return;
         }
         $('body').addClass('wait');
+        $('#random_tweet_btn').hide();
         var bot = $("#input_form input[name=optionsBot]:checked").val();
         if (bot == 't') {
             $("#response_bubble")
@@ -138,6 +141,7 @@ $(function () {
     });
 
     $('#feedback_form').on('submit', function(e) {
+        $("#feedback_form :input").prop("disabled", true);
         var feedback_data = {}
         feedback_data['bot'] = $("#input_form input[name=optionsBot]:checked").val();
         feedback_data['inp_text'] = $("#input_bubble").text();
@@ -159,8 +163,11 @@ $(function () {
             dataType: "json",
             success: function (data)
             {
-                $("#feedback_form :input").prop("disabled", true);
-                $("#thanks_modal").modal({backdrop: "static"});
+                var url = window.location.href;    
+                if (url.indexOf('?') == -1)  {
+                    url += '?thanks=1';
+                }
+                window.location.href = url;
             }
         });
         e.preventDefault();
@@ -182,12 +189,4 @@ $(function () {
     $("#feedback_form input[name=optionsContent]").on('change', checkLowScore);
 
     $("#feedback_form input[name=optionsStyle]").on('change', checkLowScore);
-
-    $('#thanks_modal').on('hidden.bs.modal', function(e) {
-        window.location.reload();
-    });
-
-    $('#thanks_modal').on('shown.bs.modal', function () {
-        $('#modal_close_button').focus();
-    });
 });
