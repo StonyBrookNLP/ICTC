@@ -3,7 +3,9 @@ $(function () {
     $('#input_bubble').hide();
     $('#response_bubble').hide();
 
+    var mobile = false;
     if ($(window).width() <= 768) {
+        mobile = true;
         $("#bubble_wrapper").before($("#trump_opt_wrapper"));
     }
 
@@ -66,6 +68,9 @@ $(function () {
                 .html('Clinton-a-bot processing....')
                 .show();
         }
+        var candidate = bot == 't' ? 'Trump' : 'Clinton';
+        var opponent = bot == 't' ? 'Clinton' : 'Trump';
+        $("#input_bubble").text(opponent + ": " + inp_text);
         var post_data = {
             message: inp_text,
             optionsBot: bot
@@ -77,7 +82,7 @@ $(function () {
             success: function (response)
             {
                 $('body').removeClass('wait');
-                $("#response_bubble").html(response);
+                $("#response_bubble").html(candidate + "-a-bot: " + response);
 
                 $("#translate_btn").hide();
                 $("#feedback_form").show();
@@ -88,7 +93,6 @@ $(function () {
         $('#input_bubble').attr('contenteditable', 'false');
 
         // customize feedback form for the candidate
-        var candidate = bot == 't' ? 'Trump' : 'Clinton';
         $("#candidate_name").html(candidate);
 
         $("#feedback_form .candidate-name").each(function(i) {
