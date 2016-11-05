@@ -1,12 +1,15 @@
 import cherrypy
 import atexit
 import sqlite3
+import threading
 
 from subprocess import Popen, PIPE
 
 trump_bot = None
 clinton_bot = None
 con = None
+trump_bot_lock = threading.Lock()
+clinton_bot_lock = threading.Lock()
 
 @atexit.register
 def cleanup():
@@ -35,12 +38,16 @@ class ICTC(object):
     def translate(self, message, optionsBot):
         if optionsBot == 'c':
             bot = clinton_bot
+            lock = clinton_bot_lock
         else:
             bot = trump_bot
+            lock = trump_bot_lock
 
-        bot.stdin.write(message + '\n')
-        bot.stdin.flush()
-        response = bot.stdout.readline()[1:].strip()
+        with lock:
+            bot.stdin.write(message + '\n')
+            bot.stdin.flush()
+            response = bot.stdout.readline()[1:].strip()
+        
         return response
 
     @cherrypy.expose
@@ -66,7 +73,7 @@ if __name__ == '__main__':
     #home_dir = '/Users/bobby/Downloads'
     home_dir = '/home/stufs1/vgottipati'
     translate_folder = home_dir + '/tensorflow/tensorflow/models/rnn/translate'
-    translate_args = '--decode --data_dir {0} --train_dir {1} --size=256 --num_layers=1 --steps_per_checkpoint=50'
+    translate_args = '--decode --data_dir {0} --train_dir {1} --size=256 --num_layers=1 --steps_per_checkpoint=10000'
 
     trump_args = (translate_folder + '/trump_data_dir', translate_folder + '/trump_checkpoint_dir')
     trump_bot_cmd = 'python ' + translate_folder + '/translate.py ' + (translate_args.format(*trump_args))
@@ -93,14 +100,14 @@ if __name__ == '__main__':
     conf = {
         '/': {
             'tools.staticdir.on'    : True,
-            'tools.staticdir.dir'   : home_dir + '/Static',
+            'tools.staticdir.dir'   : home_dir + '/Static_new',
             'tools.staticdir.index' : 'ictc.html'
         }
     }
 
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
-        'server.socket_port': 8080
+        'server.socket_port': 8081
                        })
 
     try:
