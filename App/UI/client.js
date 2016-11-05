@@ -17,7 +17,9 @@ $(function () {
 
     clinton_tweets = [
     "latest reckless idea from trump: gut rules on wall street, and leave middle-class families out to dry",
-    "climate change is real, and threatens us all."
+    "climate change is real, and threatens us all.",
+    "america never stopped being great. we just need to make it work for everyone",
+    "we need to make college more affordable"
     ];
 
     trump_tweets = [
@@ -118,8 +120,8 @@ $(function () {
         var opponent = bot == 't' ? 'Clinton' : 'Trump';
         $("#input_bubble").text(opponent + ": " + inp_text);
         var post_data = {
-            message: inp_text,
-            optionsBot: bot
+            "input": inp_text,
+            "optionsBot": bot
         };
         $.ajax({
             type: "POST",
