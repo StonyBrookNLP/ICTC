@@ -75,6 +75,8 @@ class ICTC(object):
                 bot.stdin.write(input.encode('utf8') + '\n')
                 bot.stdin.flush()
                 response = bot.stdout.readline()[1:].strip()
+                if response.endswith('LongException'):
+                    cherrypy.response.status = 400
             except:
                 cherrypy.log('Input: ' + input)
                 cherrypy.log('Response: ' + response)
