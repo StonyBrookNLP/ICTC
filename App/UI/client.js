@@ -100,9 +100,7 @@ $(function () {
                     $("#input_form").submit();
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert(xhr.status + "Sorry, there was an error getting a random tweet. Please type in an input instead");
-                    //alert(xhr.status + xhr.responseText);
-                    //alert(thrownError);
+                    alert("Error code:" + xhr.status + ". Sorry, there was an error getting a random tweet. Please type in an input instead");
               }
             });
         }
@@ -117,9 +115,17 @@ $(function () {
     var response_text = "";
     $('#input_form').on('submit', function(e) {
         e.preventDefault();
-        inp_text = $("#input_bubble").text();
+        inp_text = $("#input_bubble").text().trim();
         if (!inp_text) {
             alert("Please enter an argument for the other side");
+            return;
+        }
+        else if (inp_text.split(" ").length < 5) {
+            alert("Please enter an argument of atleast 5 words");
+            return;
+        }
+        else if (inp_text.split(" ").length >= 40) {
+            alert("Please enter an argument of less than 40 words");
             return;
         }
         $('body').addClass('wait');
@@ -144,7 +150,7 @@ $(function () {
         var opponent = bot == 't' ? 'Clinton' : 'Trump';
         $("#input_bubble").text(opponent + ": " + inp_text);
         var post_data = {
-            "input": inp_text,
+            "input": inp_text.toLowerCase(),
             "optionsBot": bot
         };
         $.ajax({
@@ -161,7 +167,8 @@ $(function () {
                 $("#feedback_form").show();
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status + "Sorry, there was an error translating the tweet. Please type in a different tweet");
+                alert("Error code:" + xhr.status + ". Sorry, there was an error translating the tweet. Refreshing the page so you can try a different tweet");
+                window.location.reload();
             }
         });
 

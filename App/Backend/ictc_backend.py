@@ -15,6 +15,20 @@ clinton_bot_lock = threading.Lock()
 trump_tweets = None
 clinton_tweets = None
 
+def read_tweets(fn):
+    with open(fn, 'r') as tweets_file:
+        tweets = tweets_file.read().split('\n')
+
+    tweets.pop(-1)
+    processed_tweets = []
+    for tweet in tweets:
+        tweet = tweet.decode('utf-8')
+        num_words = len(tweet.split())
+        if num_words < 40 and num_words >= 5:
+            processed_tweets.append(tweet)
+
+    return processed_tweets
+
 @atexit.register
 def cleanup():
     global trump_bot
@@ -57,9 +71,14 @@ class ICTC(object):
         with lock:
             # the input str is in unicode
             # need to encode into normal string before piping
-            bot.stdin.write(input.encode('utf8') + '\n')
-            bot.stdin.flush()
-            response = bot.stdout.readline()[1:].strip()
+            try:
+                bot.stdin.write(input.encode('utf8') + '\n')
+                bot.stdin.flush()
+                response = bot.stdout.readline()[1:].strip()
+            except:
+                cherrypy.log('Input: ' + input)
+                cherrypy.log('Response: ' + response)
+                raise
 
         # the response str is in normal string
         # need to convert to unicode before responding
@@ -122,24 +141,17 @@ if __name__ == '__main__':
 
     cherrypy.engine.subscribe('stop', cleanup)
 
-    with open(home_dir + '/clinton_tweets.txt', 'r') as tweets_file:
-        clinton_tweets = tweets_file.read().split('\n')
-        clinton_tweets.pop(-1)
-        clinton_tweets = [tweet.decode('utf-8') for tweet in clinton_tweets]
-
-    with open(home_dir + '/trump_tweets.txt', 'r') as tweets_file:
-        trump_tweets = tweets_file.read().split('\n')
-        trump_tweets.pop(-1)
-        trump_tweets = [tweet.decode('utf-8') for tweet in trump_tweets]
+    
+    clinton_tweets = read_tweets(home_dir + '/clinton_tweets.txt')
+    trump_tweets = read_tweets(home_dir + '/trump_tweets.txt')
+    cherrypy.log('Number of Clinton tweets: {0}'.format(len(clinton_tweets)))
+    cherrypy.log('Number of Trump tweets: {0}'.format(len(trump_tweets)))
 
     app_conf = {
         '/': {
             'tools.staticdir.on'            : True,
             'tools.staticdir.dir'           : home_dir + '/Static',
-            'tools.staticdir.index'         : 'ictc.html',
-            'tools.sessions.on'             : True,
-            'tools.sessions.storage_class'  : 'cherrypy.lib.sessions.FileSession',
-            'tools.sessions.storage_path'   : home_dir
+            'tools.staticdir.index'         : 'ictc.html'
         }
     }
 
