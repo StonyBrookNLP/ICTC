@@ -4,7 +4,7 @@ import cherrypy
 import atexit
 import sqlite3
 import threading
-
+from random import choice
 from subprocess import Popen, PIPE
 
 trump_bot = None
@@ -55,10 +55,15 @@ class ICTC(object):
             lock = trump_bot_lock
 
         with lock:
-            bot.stdin.write(input + '\n')
+            # the input str is in unicode
+            # need to encode into normal string before piping
+            bot.stdin.write(input.encode('utf8') + '\n')
             bot.stdin.flush()
             response = bot.stdout.readline()[1:].strip()
-        
+
+        # the response str is in normal string
+        # need to convert to unicode before responding
+        response = response.decode('utf-8')
         values = [
             optionsBot,
             input,
@@ -109,7 +114,7 @@ if __name__ == '__main__':
     cherrypy.log('Started Clinton bot')
 
     con = sqlite3.connect(
-        home_dir + '/feedback.db', 
+        home_dir + '/feedback_v2.db', 
         isolation_level=None, 
         check_same_thread=False)
     con.execute("create table if not exists Feedback(bot TEXT, input TEXT, response TEXT, content_score INTEGER NOT NULL, style_score INTEGER NOT NULL, suggestion TEXT, ip TEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)")
@@ -120,10 +125,12 @@ if __name__ == '__main__':
     with open(home_dir + '/clinton_tweets.txt', 'r') as tweets_file:
         clinton_tweets = tweets_file.read().split('\n')
         clinton_tweets.pop(-1)
+        clinton_tweets = [tweet.decode('utf-8') for tweet in clinton_tweets]
 
     with open(home_dir + '/trump_tweets.txt', 'r') as tweets_file:
         trump_tweets = tweets_file.read().split('\n')
         trump_tweets.pop(-1)
+        trump_tweets = [tweet.decode('utf-8') for tweet in trump_tweets]
 
     app_conf = {
         '/': {
