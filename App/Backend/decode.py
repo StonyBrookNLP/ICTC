@@ -1,3 +1,5 @@
+# _*_ coding:utf-8 _*_
+
 import math
 import os
 import random
@@ -41,16 +43,26 @@ FLAGS = tf.app.flags.FLAGS
 _buckets = [(5, 10), (10, 15), (20, 25), (40, 50)]
 
 
-class Decode:
-
-
+class Decoder:
 	def __init__(self, params):
 		self.data_dir = params['data_dir']
 		self.train_dir = params['train_dir']
 		self.size = params['size']
 		self.num_layers = params['n_layers']
-		self.model_dict = {}
-		
+
+		self.sess = tf.Session()
+		# Create model and load parameters.
+		self.model = self.create_model(self.sess, True)
+		self.model.batch_size = 1  # We decode one sentence at a time.
+
+		# Load vocabularies.
+		en_vocab_path = os.path.join(self.data_dir,
+					 "vocab%d.en" % FLAGS.en_vocab_size)
+		fr_vocab_path = os.path.join(self.data_dir,
+					 "vocab%d.fr" % FLAGS.fr_vocab_size)
+		self.en_vocab, _ = data_utils.initialize_vocabulary(en_vocab_path)
+		_, self.fr_vocab = data_utils.initialize_vocabulary(fr_vocab_path)
+
 
 	def create_model(self, session, forward_only):
 		"""Create translation model and initialize or load parameters in session."""
@@ -72,49 +84,24 @@ class Decode:
 		if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
 			print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
 			model.saver.restore(session, ckpt.model_checkpoint_path)
-		else:
-			print("Checkpoint Directory not Found.")
-			#session.run(tf.initialize_all_variables())
+			return model
 		
-		return model
-
-		
-	def decode(self):
-
-		sess = tf.Session()
-		# Create model and load parameters.
-		model = self.create_model(sess, True)
-		model.batch_size = 1  # We decode one sentence at a time.
-
-		# Load vocabularies.
-		en_vocab_path = os.path.join(self.data_dir,
-					 "vocab%d.en" % FLAGS.en_vocab_size)
-		fr_vocab_path = os.path.join(self.data_dir,
-					 "vocab%d.fr" % FLAGS.fr_vocab_size)
-		en_vocab, _ = data_utils.initialize_vocabulary(en_vocab_path)
-		_, rev_fr_vocab = data_utils.initialize_vocabulary(fr_vocab_path)
-
-		self.model_dict = {'en_vocab': en_vocab, 'fr_vocab': rev_fr_vocab, 'model': model, 'session': sess}
+		print("Checkpoint Directory not Found.")
+		return None
 
 
-	def decode_string(self, sentence):
+	def decode(self, sentence):
 	  
-		# getting  model and vocab
-		en_vocab = self.model_dict['en_vocab']
-		model = self.model_dict['model']
-		sess = self.model_dict['session']
-		rev_fr_vocab = self.model_dict['fr_vocab']
-
 		# Get token-ids for the input sentence.
-		token_ids = data_utils.sentence_to_token_ids(tf.compat.as_bytes(sentence), en_vocab)
+		token_ids = data_utils.sentence_to_token_ids(tf.compat.as_bytes(sentence), self.en_vocab)
 		# Which bucket does it belong to?
 		bucket_id = min([b for b in xrange(len(_buckets))
 			       if _buckets[b][0] > len(token_ids)])
 		# Get a 1-element batch to feed the sentence to the model.
-		encoder_inputs, decoder_inputs, target_weights = model.get_batch(
+		encoder_inputs, decoder_inputs, target_weights = self.model.get_batch(
 		  {bucket_id: [(token_ids, [])]}, bucket_id)
 		# Get output logits for the sentence.
-		_, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs,
+		_, _, output_logits = self.model.step(self.sess, encoder_inputs, decoder_inputs,
 					       target_weights, bucket_id, True)
 		# This is a greedy decoder - outputs are just argmaxes of output_logits.
 		outputs = [int(np.argmax(logit, axis=1)) for logit in output_logits]
@@ -124,28 +111,49 @@ class Decode:
 	      
 		# Print out French sentence corresponding to outputs.
 		#print(" ".join([tf.compat.as_str(rev_fr_vocab[output]) for output in outputs]))
-		translated_str = " ".join([tf.compat.as_str(rev_fr_vocab[output]) for output in outputs])      
+		translated_str = " ".join([tf.compat.as_str(self.fr_vocab[output]) for output in outputs])      
 		
 		return translated_str
 
+
 	#####close tf session#####	
 	def close_session(self):
-                self.model_dict['session'].close()
+		self.sess.close()
 
 
 if __name__ == '__main__':
 	
-	params_dict = {'data_dir':'debate/trump_data_dir/Tweets/', 'train_dir':'trump_debate_checkpoint/', 'size':256, 'n_layers':1}
-	dc = Decode(params_dict)
+	params1_dict = {
+			'data_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/trump_data_dir',
+			'train_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/trump_checkpoint_dir', 
+			'size'		: 256,
+			'n_layers'	: 1
+		}
 
-	#####initializing model####
-	dc.decode()
+	params2_dict = {
+			'data_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/clinton_data_dir',
+			'train_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/clinton_checkpoint_dir', 
+			'size'		: 256,
+			'n_layers'	: 1
+		}
+
+	dc1 = Decoder(params1_dict)
+	dc2 = Decoder(params2_dict)
 	
 	####translate sentence###
-	op = dc.decode_string('guns should be banned')		
-	print(op)
+	clinton_tweets = [
+		'latest reckless idea from trump: gut rules on wall street, and leave middle-class families out to dry',
+		'climate change is real, and threatens us all.',
+		'america never stopped being great. we just need to make it work for everyone',
+		'we need to make college more affordable',
+		'it’s time to act on gun violence',
+		'gun violence is ripping apart people’s lives'
+	]
 
+	for tweet in clinton_tweets:
+		print(dc1.decode(tweet)	)
 
-	####cose the session####
-        dc.close_session()
+	####close the session####
+	dc1.close_session()
+	dc2.close_session()
 

@@ -4,9 +4,11 @@ $(function () {
     $('#response_bubble').hide();
     $('#random_tweet_btn').hide();
 
+    var first_time = true;
     if (window.location.search) {
+        first_time = false;
         $('#thanks_div').show();
-        window.history.pushState(null, "", window.location.origin);
+        //window.history.pushState(null, "", window.location.origin);
     }
 
     var mobile = false;
@@ -17,7 +19,9 @@ $(function () {
 
     clinton_tweets = [
     "latest reckless idea from trump: gut rules on wall street, and leave middle-class families out to dry",
-    "climate change is real, and threatens us all."
+    "climate change is real, and threatens us all.",
+    "america never stopped being great. we just need to make it work for everyone",
+    "we need to make college more affordable"
     ];
 
     trump_tweets = [
@@ -73,14 +77,36 @@ $(function () {
 
     $("#random_tweet_btn").click( function(){
         var bot = $("#input_form input[name=optionsBot]:checked").val();
-        var idx = Math.floor(Math.random() * (2));
-        if (bot == 't') {
-            $("#input_bubble").text(clinton_tweets[idx]);
+        var opponent = bot == 't' ? 'c' : 't';
+        var random_tweet = "";
+        if (first_time) {
+            var idx = Math.floor(Math.random() * (2));
+            if (bot == 't') {
+                random_tweet = clinton_tweets[idx];
+            } else {
+                random_tweet = trump_tweets[idx];
+            }
+
+            $("#input_bubble").text(random_tweet);
+            $("#input_form").submit();
         } else {
-            $("#input_bubble").text(trump_tweets[idx]);
+            $.ajax({
+                type: "POST",
+                url: "randomTweet",
+                data: {"candidate": opponent},
+                success: function (tweet)
+                {
+                    $("#input_bubble").text(tweet);
+                    $("#input_form").submit();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + "Sorry, there was an error getting a random tweet. Please type in an input instead");
+                    //alert(xhr.status + xhr.responseText);
+                    //alert(thrownError);
+              }
+            });
         }
         
-        $(this).closest('form').submit();
         return false;
     }); 
 
@@ -118,8 +144,8 @@ $(function () {
         var opponent = bot == 't' ? 'Clinton' : 'Trump';
         $("#input_bubble").text(opponent + ": " + inp_text);
         var post_data = {
-            message: inp_text,
-            optionsBot: bot
+            "input": inp_text,
+            "optionsBot": bot
         };
         $.ajax({
             type: "POST",
@@ -133,6 +159,9 @@ $(function () {
 
                 $("#translate_btn").hide();
                 $("#feedback_form").show();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status + "Sorry, there was an error translating the tweet. Please type in a different tweet");
             }
         });
 
