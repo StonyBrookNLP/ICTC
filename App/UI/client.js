@@ -182,9 +182,9 @@ $(function () {
             $(this).text(candidate);
           });
         if (bot == 't') {
-            $("#content_question").html("Was Trump's response about the same topic as what you typed for Clinton?");
+            $("#content_question").html("Was Trump-a-bot's response about the same topic as what you typed for Clinton?");
         } else {
-            $("#content_question").html("Was Clinton's response about the same topic as what you typed for Trump?");
+            $("#content_question").html("Was Clinton-a-bot's response about the same topic as what you typed for Trump?");
         }
 
     });
