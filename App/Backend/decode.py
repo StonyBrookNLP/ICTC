@@ -90,7 +90,7 @@ class Decoder:
 		return None
 
 
-	def decode_string(self, sentence):
+	def decode(self, sentence):
 	  
 		# Get token-ids for the input sentence.
 		token_ids = data_utils.sentence_to_token_ids(tf.compat.as_bytes(sentence), self.en_vocab)
@@ -123,14 +123,22 @@ class Decoder:
 
 if __name__ == '__main__':
 	
-	params_dict = {
+	params1_dict = {
 			'data_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/trump_data_dir',
 			'train_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/trump_checkpoint_dir', 
 			'size'		: 256,
 			'n_layers'	: 1
 		}
 
-	dc = Decoder(params_dict)
+	params2_dict = {
+			'data_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/clinton_data_dir',
+			'train_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/clinton_checkpoint_dir', 
+			'size'		: 256,
+			'n_layers'	: 1
+		}
+
+	dc1 = Decoder(params1_dict)
+	dc2 = Decoder(params2_dict)
 	
 	####translate sentence###
 	clinton_tweets = [
@@ -143,9 +151,9 @@ if __name__ == '__main__':
 	]
 
 	for tweet in clinton_tweets:
-		op = dc.decode_string(tweet)		
-		print(op)
+		print(dc1.decode(tweet)	)
 
 	####close the session####
-	dc.close_session()
+	dc1.close_session()
+	dc2.close_session()
 

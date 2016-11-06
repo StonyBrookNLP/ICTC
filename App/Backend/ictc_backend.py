@@ -12,6 +12,8 @@ clinton_bot = None
 con = None
 trump_bot_lock = threading.Lock()
 clinton_bot_lock = threading.Lock()
+trump_tweets = None
+clinton_tweets = None
 
 @atexit.register
 def cleanup():
@@ -34,6 +36,13 @@ def cleanup():
 
 
 class ICTC(object):
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def randomTweet(self, candidate):
+        if candidate == 'c':
+            return choice(clinton_tweets)
+        return choice(trump_tweets)
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -107,6 +116,14 @@ if __name__ == '__main__':
     con.execute("create table if not exists Interaction(bot TEXT NOT NULL, input TEXT NOT NULL, response TEXT NOT NULL, ip TEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)")
 
     cherrypy.engine.subscribe('stop', cleanup)
+
+    with open(home_dir + '/clinton_tweets.txt', 'r') as tweets_file:
+        clinton_tweets = tweets_file.read().split('\n')
+        clinton_tweets.pop(-1)
+
+    with open(home_dir + '/trump_tweets.txt', 'r') as tweets_file:
+        trump_tweets = tweets_file.read().split('\n')
+        trump_tweets.pop(-1)
 
     app_conf = {
         '/': {
