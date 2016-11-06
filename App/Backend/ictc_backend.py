@@ -4,8 +4,8 @@ import cherrypy
 import atexit
 import sqlite3
 import threading
-
-from subprocess import Popen, PIPE
+from random import choice
+from decode import Decoder
 
 trump_bot = None
 clinton_bot = None
@@ -19,12 +19,12 @@ clinton_tweets = None
 def cleanup():
     global trump_bot
     if trump_bot:
-        trump_bot.kill()
+        trump_bot.close_session()
         trump_bot = None
         cherrypy.log('Closed Trump bot')
     global clinton_bot
     if clinton_bot:
-        clinton_bot.kill()
+        clinton_bot.close_session()
         clinton_bot = None
         cherrypy.log('Closed Clinton bot')
     global con
@@ -36,6 +36,7 @@ def cleanup():
 
 
 class ICTC(object):
+
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -55,9 +56,7 @@ class ICTC(object):
             lock = trump_bot_lock
 
         with lock:
-            bot.stdin.write(input + '\n')
-            bot.stdin.flush()
-            response = bot.stdout.readline()[1:].strip()
+            response = bot.decode(input)
         
         values = [
             optionsBot,
@@ -92,21 +91,25 @@ if __name__ == '__main__':
     home_dir = '/Users/bobby/Downloads'
     #home_dir = '/home/stufs1/vgottipati'
     translate_folder = home_dir + '/tensorflow/tensorflow/models/rnn/translate'
-    translate_args = '--decode --data_dir {0} --train_dir {1} --size=256 --num_layers=1 --steps_per_checkpoint=10000'
 
-    trump_args = (translate_folder + '/trump_data_dir', translate_folder + '/trump_checkpoint_dir')
-    trump_bot_cmd = 'python ' + translate_folder + '/translate.py ' + (translate_args.format(*trump_args))
-    trump_bot = Popen(trump_bot_cmd.split(), shell=False, stdin=PIPE, stdout=PIPE)
-    # flush out the intial info line
-    trump_bot.stdout.readline()
+    clinton_args = {
+            'data_dir'  : translate_folder + '/clinton_data_dir',
+            'train_dir' : translate_folder + '/clinton_checkpoint_dir', 
+            'size'      : 256,
+            'n_layers'  : 1
+        }
+    clinton_bot = Decoder(clinton_args)
+    cherrypy.log('Started Clinton bot')
+
+    trump_args = {
+            'data_dir'  : translate_folder + '/trump_data_dir',
+            'train_dir' : translate_folder + '/trump_checkpoint_dir', 
+            'size'      : 256,
+            'n_layers'  : 1
+        }
+    trump_bot = Decoder(trump_args)
     cherrypy.log('Started Trump bot')
 
-    clinton_args = (translate_folder + '/clinton_data_dir', translate_folder + '/clinton_checkpoint_dir')
-    clinton_bot_cmd = 'python ' + translate_folder + '/translate.py ' + (translate_args.format(*clinton_args))
-    clinton_bot = Popen(clinton_bot_cmd.split(), shell=False, stdin=PIPE, stdout=PIPE)
-    # flush out the intial info line
-    clinton_bot.stdout.readline()
-    cherrypy.log('Started Clinton bot')
 
     con = sqlite3.connect(
         home_dir + '/feedback.db', 
