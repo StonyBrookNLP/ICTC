@@ -9,7 +9,7 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow.models.rnn.translate import data_utils
-from tensorflow.models.rnn.translate import seq2seq_model
+import seq2seq_model
 
 
 tf.app.flags.DEFINE_float("learning_rate", 0.5, "Learning rate.")
@@ -49,22 +49,25 @@ class Decoder:
 		self.train_dir = params['train_dir']
 		self.size = params['size']
 		self.num_layers = params['n_layers']
+		self.scope_name = params['scope_name']
+
 
 		self.sess = tf.Session()
-		# Create model and load parameters.
-		self.model = self.create_model(self.sess, True)
-		self.model.batch_size = 1  # We decode one sentence at a time.
+		with tf.variable_scope(self.scope_name):
+			self.model = self.create_model(self.sess, True, self.scope_name)
 
-		# Load vocabularies.
-		en_vocab_path = os.path.join(self.data_dir,
-					 "vocab%d.en" % FLAGS.en_vocab_size)
-		fr_vocab_path = os.path.join(self.data_dir,
-					 "vocab%d.fr" % FLAGS.fr_vocab_size)
-		self.en_vocab, _ = data_utils.initialize_vocabulary(en_vocab_path)
-		_, self.fr_vocab = data_utils.initialize_vocabulary(fr_vocab_path)
+			self.model.batch_size = 1  # We decode one sentence at a time.
+
+			# Load vocabularies.
+			en_vocab_path = os.path.join(self.data_dir,
+						 "vocab%d.en" % FLAGS.en_vocab_size)
+			fr_vocab_path = os.path.join(self.data_dir,
+						 "vocab%d.fr" % FLAGS.fr_vocab_size)
+			self.en_vocab, _ = data_utils.initialize_vocabulary(en_vocab_path)
+			_, self.fr_vocab = data_utils.initialize_vocabulary(fr_vocab_path)
 
 
-	def create_model(self, session, forward_only):
+	def create_model(self, session, forward_only, scope_name):
 		"""Create translation model and initialize or load parameters in session."""
 		dtype = tf.float16 if FLAGS.use_fp16 else tf.float32
 		model = seq2seq_model.Seq2SeqModel(
@@ -78,7 +81,8 @@ class Decoder:
 			FLAGS.learning_rate,
 			FLAGS.learning_rate_decay_factor,
 			forward_only=forward_only,
-			dtype=dtype)
+			dtype=dtype,
+			tf_scope=scope_name)
 
 		ckpt = tf.train.get_checkpoint_state(self.train_dir)
 		if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
@@ -124,17 +128,19 @@ class Decoder:
 if __name__ == '__main__':
 	
 	params1_dict = {
-			'data_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/trump_data_dir',
-			'train_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/trump_checkpoint_dir', 
+			'data_dir'	: '/home/shbhatia/tensorflow-0.11.0rc1/tensorflow/models/rnn/translate/debate/trump_data_dir/Tweets/',
+			'train_dir'	: '/home/shbhatia/tensorflow-0.11.0rc1/tensorflow/models/rnn/translate/debate/checkpoints/trump_debate_checkpoint/', 
 			'size'		: 256,
-			'n_layers'	: 1
+			'n_layers'	: 1,
+			'scope_name'	: "en_fr"
 		}
 
 	params2_dict = {
-			'data_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/clinton_data_dir',
-			'train_dir'	: '/Users/bobby/Downloads/tensorflow/tensorflow/models/rnn/translate/clinton_checkpoint_dir', 
+			'data_dir'	: '/home/shbhatia/tensorflow-0.11.0rc1/tensorflow/models/rnn/translate/debate/clinton_data_dir/Tweets/',
+			'train_dir'	: '/home/shbhatia/tensorflow-0.11.0rc1/tensorflow/models/rnn/translate/debate/checkpoints/clinton_debate_checkpoint/', 
 			'size'		: 256,
-			'n_layers'	: 1
+			'n_layers'	: 1,
+			'scope_name'	: "fr_en"
 		}
 
 	dc1 = Decoder(params1_dict)
