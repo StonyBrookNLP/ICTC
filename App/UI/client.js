@@ -3,6 +3,7 @@ $(function () {
     $('#input_bubble').hide();
     $('#response_bubble').hide();
     $('#random_tweet_btn').hide();
+    $('#try_again_btn').hide();
 
     var first_time = true;
     if (window.location.search) {
@@ -68,14 +69,18 @@ $(function () {
 
     });
 
-    var submitForm = function (e) {
+    var submitForm = function(e) {
         if (e.which == 13) {
             $(this).closest('form').submit();
             return false;
         }
     };
 
-    $("#random_tweet_btn").click( function(){
+    $("#try_again_btn").click( function() {
+        window.location.reload();
+    });
+
+    $("#random_tweet_btn").click( function() {
         var bot = $("#input_form input[name=optionsBot]:checked").val();
         var opponent = bot == 't' ? 'c' : 't';
         var random_tweet = "";
@@ -164,6 +169,7 @@ $(function () {
                 $("#response_bubble").html(candidate + "-a-bot: " + response);
 
                 $("#translate_btn").hide();
+                $("#try_again_btn").show();
                 $("#feedback_form").show();
             },
             error: function (xhr, ajaxOptions, thrownError) {
