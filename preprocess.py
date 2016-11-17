@@ -1,3 +1,4 @@
+# coding: utf-8
 import re
 
 def strip_url(text):
@@ -38,3 +39,38 @@ def preprocess(tweet):
     tweet = strip_hash_tags(tweet)
 
     return tweet
+
+
+def filter_tweets(line, file_name):
+    
+    if "hillary" in file_name:
+        pattern_cli = "(—|-)\s*(hillary|h)"
+        handle = "@hillaryclinton" 
+    else:
+        pattern_cli = "(—|-)\s*(donaldtrump|trump|donald)" 
+        handle = "@realdonaldtrump"
+    
+    
+    line = line.strip()
+    flag = True
+
+    #if "\"" in line or "“" in line or "”" in line:
+    pattern = re.compile(pattern_cli)
+    if pattern.search(line):
+        line = re.sub(pattern, "", line)
+        line = line.replace('"', "").replace('“', "").replace('”', "")
+    else:
+        pattern = re.compile("(—|-)\s*@")
+        if pattern.search(line):
+            flag = False
+
+
+    if handle in line:
+        flag = False
+
+        
+    if flag:
+        return line
+    else:
+        return ''
+
