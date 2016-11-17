@@ -1,0 +1,3 @@
+"sent" (--person name|—(\s?)person name)
+if it is a retweet
+if it contains candidate handle
