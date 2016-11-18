@@ -1,0 +1,102 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 120px;
+}
+
+.wait, .wait * {
+  cursor: wait;
+}
+
+[contenteditable] {
+  padding:12px;
+}
+
+[data-placeholder]:empty:before {
+  content: attr(data-placeholder);
+  color: #d0d0d0;
+  cursor: text;
+  font-style: italic;
+}
+
+.alert {
+  margin: 0 0 5px 0;
+  padding: 10px;
+}
+
+.footer {
+  padding: 50px 0 0 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 120px;
+}
+
+.bubble {
+  position:relative;
+  padding: 20px;
+  background: #377BB5;
+  color: #fff;
+  border-radius: 20px;
+  margin: 0 0 1em 0;
+  display: inline-block;
+  outline: none;
+}
+
+.bubble.left {
+  margin-left: 40px;
+}
+
+.bubble.left:after {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  display: block;
+  top: 20px;
+  left: -40px; /* value = - border-left-width - border-right-width */
+  bottom: auto;
+  border-width: 15px 40px 0 0; /* vary these values to change the angle of the vertex */
+  border-color: transparent #377BB5;
+}
+
+.bubble.right {
+  margin-right: 40px;
+}
+
+.bubble.right:after {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  display: block;
+  top: 20px;
+  right: -40px; /* value = - border-left-width - border-right-width */
+  bottom: auto;
+  border-width: 15px 0 0 40px; /* vary these values to change the angle of the vertex */
+  border-color: transparent #377BB5;
+}
+
+#hlab_img {
+  float: left;
+  margin: 0 10px;
+}
+
+#try_again_btn {
+  display: block;
+  margin: 5px auto;
+}
+
+@media screen and (max-width: 768px) {
+  #input_form img {
+    max-width: 70px;
+    height: auto;
+  }
+}
+
+#input_form label {
+    display: inline-block;
+}
