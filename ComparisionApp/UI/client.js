@@ -2,15 +2,16 @@ $(function () {
 
     $('#input_bubble').hide();
     $('#response_bubble').hide();
-    $('#random_tweet_btn').hide();
     $('#try_again_btn').hide();
 
     var first_time = true;
     if (window.location.search) {
         first_time = false;
         $('#thanks_div').show();
-        //window.history.pushState(null, "", window.location.origin);
+        window.history.pushState(null, "", window.location.origin);
     }
+
+    var firstResponse = true;
 
     var mobile = false;
     if ($(window).width() <= 768) {
@@ -38,37 +39,6 @@ $(function () {
         }
     });
 
-    $("#input_form input[name=optionsBot]").on('change', function(e) {
-        var bot = $("#input_form input[name=optionsBot]:checked").val();
-
-        if (bot == 't') {
-            $("#input_bubble")
-                .removeClass()
-                .addClass("bubble left")
-                .css('float', 'left')
-                .attr('data-placeholder', "Type in something Clinton would say to see what Trump-a-bot says back")
-                .text("")
-                .show()
-                .focus();
-            $('#random_tweet_btn')
-                .html("OR Try a random Clinton tweet")
-                .show();
-        } else {
-            $("#input_bubble")
-                .removeClass()
-                .addClass("bubble right")
-                .css('float', 'right')
-                .attr('data-placeholder', "Type in something Trump would say to see what Clinton-a-bot says back")
-                .text("")
-                .show()
-                .focus();
-            $('#random_tweet_btn')
-                .html("OR Try a random Trump tweet")
-                .show();
-        }
-
-    });
-
     var submitForm = function(e) {
         if (e.which == 13) {
             $(this).closest('form').submit();
@@ -84,6 +54,8 @@ $(function () {
         var bot = $("#input_form input[name=optionsBot]:checked").val();
         var opponent = bot == 't' ? 'c' : 't';
         var random_tweet = "";
+
+        
         if (first_time) {
             var idx = Math.floor(Math.random() * (2));
             if (bot == 't') {
@@ -120,37 +92,10 @@ $(function () {
     var response_text = "";
     $('#input_form').on('submit', function(e) {
         e.preventDefault();
-        inp_text = $("#input_bubble").text().trim();
-        if (!inp_text) {
-            alert("Please enter an argument for the other side");
-            return;
-        }
-        else if (inp_text.split(" ").length < 5) {
-            alert("Please enter an argument of atleast 5 words");
-            return;
-        }
-        else if (inp_text.split(" ").length >= 40) {
-            alert("Please enter an argument of less than 40 words");
-            return;
-        }
         $('body').addClass('wait');
         $('#random_tweet_btn').hide();
         var bot = $("#input_form input[name=optionsBot]:checked").val();
-        if (bot == 't') {
-            $("#response_bubble")
-                .removeClass()
-                .addClass( "bubble right" )
-                .css('float', 'right')
-                .html('Trump-a-bot processing....')
-                .show();
-        } else {
-            $("#response_bubble")
-                .removeClass()
-                .addClass( "bubble left" )
-                .css('float', 'left')
-                .html('Clinton-a-bot processing....')
-                .show();
-        }
+        
         var candidate = bot == 't' ? 'Trump' : 'Clinton';
         var opponent = bot == 't' ? 'Clinton' : 'Trump';
         $("#input_bubble").text(opponent + ": " + inp_text);
@@ -166,11 +111,38 @@ $(function () {
             {
                 response_text = response;
                 $('body').removeClass('wait');
-                $("#response_bubble").html(candidate + "-a-bot: " + response);
+                if (bot == 't') {
+                    $("#input_bubble")
+                        .removeClass()
+                        .addClass("bubble left")
+                        .css('float', 'left')
+                        .text("a random argument")
+                        .show();
+                    $("#response_bubble")
+                        .removeClass()
+                        .addClass( "bubble right" )
+                        .css('float', 'right')
+                        .html('response from model 1')
+                        .show();
+                } else {
+                    $("#input_bubble")
+                        .removeClass()
+                        .addClass("bubble right")
+                        .css('float', 'right')
+                        .text("a random argument")
+                        .show();
+                    $("#response_bubble")
+                        .removeClass()
+                        .addClass( "bubble left" )
+                        .css('float', 'left')
+                        .html('response from model 1')
+                        .show();
+                }
 
                 $("#translate_btn").hide();
-                $("#try_again_btn").show();
+                //$("#try_again_btn").show();
                 $("#feedback_form").show();
+                
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert("Error code:" + xhr.status + ". Sorry, there was an error translating the tweet. Refreshing the page so you can try a different tweet");
@@ -196,7 +168,7 @@ $(function () {
     });
 
     $('#feedback_form').on('submit', function(e) {
-        $("#feedback_form :input").prop("disabled", true);
+        //$("#feedback_form :input").prop("disabled", true);
         var feedback_data = {}
         feedback_data['bot'] = $("#input_form input[name=optionsBot]:checked").val();
         feedback_data['inp_text'] = inp_text;
@@ -210,22 +182,45 @@ $(function () {
             suggestion_text = ""
         }
         feedback_data['suggestion_text'] = suggestion_text;
-        $.ajax({
-            type: "POST",
-            url: $(this).attr('action'),
-            data: JSON.stringify(feedback_data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (data)
-            {
-                var url = window.location.href;    
-                if (url.indexOf('?') == -1)  {
-                    url += '?thanks=1';
+        if (firstResponse) {
+            // store feedback in a var
+            // reset the form
+            // show div for asking new feedback
+            // animate response 2
+            // show compare q
+            // make it required
+            $('#thanks_div').hide();
+            $("#response_bubble").html('response from model 2');
+            $("#response_bubble").animate({ 'zoom': 1.2 }, 400);
+            $("#response_bubble").animate({ 'zoom': 1 }, 400);
+            $("#response_bubble").focus();
+            $("#feedback_request_div").show()
+            $("#compare_wrapper").show();
+            $("#compare_wrapper input[name=optionsComparision]").attr('required', true);
+            $("#feedback_form input:radio").removeAttr("checked");
+            //$('#feedback_form').reset();
+
+        } else {
+            // store feedback for 2 also
+            // make ajax call to send both the feedback tog in a json
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: JSON.stringify(feedback_data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data)
+                {
+                    var url = window.location.href;    
+                    if (url.indexOf('?') == -1)  {
+                        url += '?thanks=1';
+                    }
+                    window.location.href = url;
                 }
-                window.location.href = url;
-            }
-        });
-        e.preventDefault();
+            });
+        }
+        firstResponse = false;
+        return false;
     });
 
     var checkLowScore = function() {
@@ -235,7 +230,7 @@ $(function () {
         style_score = parseInt(style_score, 10);
 
         if (content_score < 3 || style_score < 3) {
-            $("#suggestion_wrapper").show();
+            //$("#suggestion_wrapper").show();
         } else {
             $("#suggestion_wrapper").hide();
         }
