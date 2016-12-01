@@ -8,6 +8,10 @@ body {
   margin-bottom: 120px;
 }
 
+.center-block {
+    float: none;
+}
+
 .wait, .wait * {
   cursor: wait;
 }

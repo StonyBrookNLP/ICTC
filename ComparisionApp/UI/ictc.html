@@ -15,140 +15,105 @@
                 </div>
                 <div class="col-lg-8 col-lg-offset-2">
                     <h1>Presidential bot debate</h1>
-                    <h3>Argue as:</h1>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-lg-10 col-lg-offset-1">
-                    <form id="input_form" method="post" action="translate" role="form">
-                        <div class="controls">
-                            <div class="row">
-                                <div id="clinton_opt_wrapper" class="col-md-3 col-xs-6">
-                                <label class="radio-inline control-label">
-                                    <input type="radio" name="optionsBot" value="t" required="true">
-                                    Clinton
-                                    <img id="clinton_podium_img" class="img-responsive img-thumbnail" src="Clinton/podium.jpg" width="200" height="200"/>
-                                </label>
-                                </div>
-                                <div id="bubble_wrapper" class="col-md-6 col-xs-12">
-                                    <div class="col-md-12 col-xs-12">
-                                    <div id="input_bubble" class="bubble" contenteditable="true" hidden="true"></div>
-                                    </div>
-                                    <div class="col-md-12 col-xs-12">
-                                    <div id="response_bubble" class="bubble" hidden="true"></div>
-                                    </div>
-                                </div>
-                                <div id="trump_opt_wrapper" class="col-md-3 col-xs-6">
-                                <label class="radio-inline control-label">
-                                    <input type="radio" name="optionsBot" value="c">
-                                    Trump
-                                    <img id="trump_podium_img" class="img-responsive img-thumbnail" src="Trump/podium.jpg" width="200" height="200"/>
-                                </label>
-                                </div>
-                                <div class="col-md-12 col-xs-12 center-block">
-                                    <input type="submit" id="translate_btn" class="btn btn-success btn-send center-block" value="Argue">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-
-                      <button type="button" id="try_again_btn" class="btn btn-success text-center">Try another argument</button>
-
-                    <form id="feedback_form" method="post" action="feedback" role="form" hidden="true">
-                        <div id="feedback_request_div" class="alert alert-success" role="alert" hidden="true">
-                            Thanks for your feedback!
-                            <br/>
-                            <strong>
-                                Please provide feedback on the 2nd response to the same argument.
-                            </strong>
-                        </div>
-                        <div class="controls">
-                            <div class="row">
-                                <div id='style_score_wrapper'>
-                                    <div class="col-md-12">
-                                        <label>
-                                            Does the response sound like the way <span class="candidate-name"></span> would say it?
-                                        </label>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="radio-inline control-label">
-                                            <input type="radio" name="optionsStyle" value="1" required="true">Not at all
-                                        </label>
-                                        <label class="radio-inline control-label">
-                                            <input type="radio" name="optionsStyle" value="2">
-                                            Slightly <span class="candidate-name"></span> 
-                                        </label>
-                                        <label class="radio-inline control-label">
-                                            <input type="radio" name="optionsStyle" value="3">
-                                            Very <span class="candidate-name"></span> 
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <br/>
-                            <div class="row">
-                                <div id='content_score_wrapper'>
-                                    <div class="col-md-12">
-                                        <label id='content_question'>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="optionsContent" value="1" required="true">
-                                            Seems unrelated
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="optionsContent" value="2">
-                                            A little related
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="optionsContent" value="3">
-                                            Sounds like the same topic
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div id='suggestion_wrapper' class="col-md-12" hidden="true">
-                                    <br/>
-                                    <label for="input_text">
-                                        What do you think <span class="candidate-name"></span> would say instead?
-                                    </label>
-                                    <textarea id="suggestion_text" name="Suggestion" class="form-control" placeholder="A better response for your argument" rows="4"></textarea>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div id='compare_wrapper' class="col-md-12" hidden="true">
-                                    <br/>
-                                    <label for="input_text">
-                                        Between the two responses, which do you think is better?
-                                    </label>
-                                    <div class="radio">
-                                        <label>
-                                        <input type="radio" name="optionsComparision" value="1">
-                                        Response 1 text
-                                        </label>
-                                    </div>
-                                    <div class="radio">
-                                        <label>
-                                        <input type="radio" name="optionsComparision" value="2">
-                                        Response 2 text
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <br/>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="submit" class="btn btn-success btn-send" value="Submit Feedback">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
+                    <div class="text-center">
+                    <img id="clinton_podium_img" class="img-responsive img-thumbnail" src="Clinton/podium.jpg" width="100" height="100"/>
+                    <div class="bubble left">A resonable sized tweet from clinton. Testing to see long input</div>
+                    </div>
                 </div>
+            </div>
+
+            <div class="row">
+                <form id="input_form" method="post" action="translate" role="form">
+                    <div class="controls">
+                        <div class="row">
+                        <div id="feedback1_wrapper" class="col-md-6 text-left">
+                            <div class="col-md-12">
+                                <img id="clinton_podium_img" class="img-responsive img-thumbnail" src="Clinton/podium.jpg" width="100" height="100"/>
+                                <div class="bubble left">Response 1 from Trump Response 1 </div>
+                            </div>
+                            <div id='style_score_wrapper'>
+                                <div class="col-md-12">
+                                    <br>
+                                    <label>
+                                        Does the response sound like the way <span class="candidate-name"></span> would say it?
+                                    </label>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="radio-inline control-label">
+                                        <input type="radio" name="optionsStyle" value="1" required="true">Not at all
+                                    </label>
+                                    <label class="radio-inline control-label">
+                                        <input type="radio" name="optionsStyle" value="2">
+                                        Slightly <span class="candidate-name"></span> 
+                                    </label>
+                                    <label class="radio-inline control-label">
+                                        <input type="radio" name="optionsStyle" value="3">
+                                        Very <span class="candidate-name"></span> 
+                                    </label>
+                                </div>
+                            </div>
+                            <div id='content_score_wrapper'>
+                                <div class="col-md-12">
+                                    <br>
+                                    <label id='content_question'>
+                                    Does the topic seem same?
+                                    </label>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsContent" value="1" required="true">
+                                        Seems unrelated
+                                    </label>
+                                    </div>
+                                    <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsContent" value="2">
+                                        A little related
+                                    </label>
+                                    </div>
+                                    <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsContent" value="3">
+                                        Sounds like the same topic
+                                    </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="feedback2_wrapper" class="col-md-6 text-right">
+                            <div class="col-md-12">
+                                <div class="bubble right">Response 2 from Trump</div>
+                                <img id="trump_podium_img" class="img-responsive img-thumbnail" src="Trump/podium.jpg" width="100" height="100"/>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12 col-xs-12 text-center">
+                            Which among the two sounds like a better response?
+                            <div class="col-md-12">
+                                <label class="radio-inline control-label">
+                                    <input type="radio" name="optionsCompare" value="1" required="true">Response 1
+                                </label>
+                                <label class="radio-inline control-label">
+                                    <input type="radio" name="optionsCompare" value="2">
+                                    Response 2
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-xs-12">
+                            <br>
+                            <input type="submit" id="translate_btn" class="btn btn-success btn-send center-block" value="Next set">
+                        </div>
+
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
