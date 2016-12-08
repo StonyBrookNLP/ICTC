@@ -21,8 +21,8 @@
             <div class="row">
                 <div class="col-lg-10 col-lg-offset-1">
                     <div class="text-center">
-                    <img id="clinton_podium_img" class="img-responsive img-thumbnail" src="Clinton/podium.jpg" width="100" height="100"/>
-                    <div id="input_text" class="bubble left">A resonable sized tweet from clinton. Testing to see long input</div>
+                    <img id="candidate_img" class="img-responsive img-thumbnail" width="100" height="100"/>
+                    <div id="input_text" class="bubble left"></div>
                     </div>
                 </div>
             </div>
@@ -33,14 +33,18 @@
                         <div class="row">
                         <div id="feedback1_wrapper" class="col-md-6 text-left">
                             <div class="col-md-12">
-                                <img id="trump_podium_img" class="img-responsive img-thumbnail" src="Trump/podium.jpg" width="100" height="100"/>
-                                <div id="response1" class="bubble left">Response 1 from Trump Response 1 </div>
+                                <div class="col-md-3">
+                                <img name="opponent-img" class="img-responsive img-thumbnail" width="100" height="100"/>
+                                </div>
+                                <div class="col-md-9">
+                                <div id="response1" class="bubble left"></div>
+                                </div>
                             </div>
                             <div id='style_score_wrapper'>
                                 <div class="col-md-12">
                                     <br>
                                     <label>
-                                        Does the response sound like the way Trump<span class="candidate-name"></span> would say it?
+                                        Does the response sound like the way <span class="opponent-name"></span> would say it?
                                     </label>
                                 </div>
                                 <div class="col-md-12">
@@ -49,11 +53,11 @@
                                     </label>
                                     <label class="radio-inline control-label">
                                         <input type="radio" name="optionsStyle1" value="2">
-                                        Slightly <span class="candidate-name"></span> 
+                                        Slightly <span class="opponent-name"></span> 
                                     </label>
                                     <label class="radio-inline control-label">
                                         <input type="radio" name="optionsStyle1" value="3">
-                                        Very <span class="candidate-name"></span> 
+                                        Very <span class="opponent-name"></span> 
                                     </label>
                                 </div>
                             </div>
@@ -61,7 +65,7 @@
                                 <div class="col-md-12">
                                     <br>
                                     <label id='content_question'>
-                                    Is this response on the same topic as Clinton's statement at the top?
+                                    Is this response on the same topic as <span class="candidate-name"></span>'s statement at the top?
                                     </label>
                                 </div>
                                 <div class="col-md-12">
@@ -88,14 +92,18 @@
                         </div>
                         <div id="feedback2_wrapper" class="col-md-6">
                             <div class="col-md-12 text-right">
-                                <div id="response2" class="bubble right">Response 2 from Trump</div>
-                                <img id="trump_podium_img" class="img-responsive img-thumbnail" src="Trump/podium.jpg" width="100" height="100"/>
+                                <div class="col-md-9">
+                                <div id="response2" class="bubble right"></div>
+                                </div>
+                                <div class="col-md-3">
+                                <img name="opponent-img" class="img-responsive img-thumbnail" width="100" height="100"/>
+                                </div>
                             </div>
                             <div id='style_score_wrappe2r' class="col-md-10 col-md-offset-2">
                                 <div class="col-md-12">
                                     <br>
                                     <label>
-                                        Does the response sound like the way Trump<span class="candidate-name"></span> would say it?
+                                        Does the response sound like the way <span class="opponent-name"></span> would say it?
                                     </label>
                                 </div>
                                 <div class="col-md-12">
@@ -104,11 +112,11 @@
                                     </label>
                                     <label class="radio-inline control-label">
                                         <input type="radio" name="optionsStyle2" value="2">
-                                        Slightly <span class="candidate-name"></span> 
+                                        Slightly <span class="opponent-name"></span> 
                                     </label>
                                     <label class="radio-inline control-label">
                                         <input type="radio" name="optionsStyle2" value="3">
-                                        Very <span class="candidate-name"></span> 
+                                        Very <span class="opponent-name"></span> 
                                     </label>
                                 </div>
                             </div>
@@ -116,7 +124,7 @@
                                 <div class="col-md-12">
                                     <br>
                                     <label id='content_question2'>
-                                    Is this response on the same topic as Clinton's statement at the top?
+                                    Is this response on the same topic as <span class="candidate-name"></span>'s statement at the top?
                                     </label>
                                 </div>
                                 <div class="col-md-12">

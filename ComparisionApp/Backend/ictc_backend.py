@@ -4,14 +4,14 @@ import atexit
 import sqlite3
 import threading
 import time
-from random import choice
 
 con = None
 pairs = {}
+long_txt = 'wae rawg est st h r dt hry  jtfjjt j tyjf tj tk ugy agr re g esg se g tsh rdryhdtd dh drt h ht h thfyj ftj   s e  esh srt hd  ht  a efw  fw rg e  g '
 for i in range(12):
     s = str(i)
     b = 't' if (i/3) % 2 else 'c'
-    pair = [i, i/3, b, 'inp' + s, 'r1_'+ s, 'r2_' + s]
+    pair = [i, i/3, b, 'inp' + s + long_txt, 'r1_'+ s + long_txt, 'r2_' + s + long_txt]
     pairs[i] = pair
 
 next_user_id = '1'
@@ -25,16 +25,6 @@ time_limit = 1 * 60
 
 @atexit.register
 def cleanup():
-    global trump_bot
-    if trump_bot:
-        trump_bot.kill()
-        trump_bot = None
-        cherrypy.log('Closed Trump bot')
-    global clinton_bot
-    if clinton_bot:
-        clinton_bot.kill()
-        clinton_bot = None
-        cherrypy.log('Closed Clinton bot')
     global con
     if con:
         con.close()

@@ -7,9 +7,31 @@ $(function () {
     var response1 = Cookies.get('response1');
     var response2 = Cookies.get('response2');
 
-    $("#input_text").text(input);
-    $("#response1").text(response1);
-    $("#response2").text(response2);
+    if (bot == 'c') {
+        var candidate = 'Trump';
+        var opponent = 'Clinton';
+    } else {
+        var candidate = 'Clinton';
+        var opponent = 'Trump';
+    }
+
+    $("#candidate_img").attr('src', candidate + "/podium.jpg");
+
+    $("#feedback_form img[name=opponent-img]").each(function(i) {
+        $(this).attr('src', opponent + "/podium.jpg");
+    });
+
+    $("#input_text").text(candidate + ": " + input);
+    $("#response1").text(opponent + " response 1: " + response1);
+    $("#response2").text(opponent + " response 2: " + response2);
+
+    $("#feedback_form .candidate-name").each(function(i) {
+        $(this).text(candidate);
+    });
+
+    $("#feedback_form .opponent-name").each(function(i) {
+        $(this).text(opponent);
+    });
 
     if (window.location.search) {
         $('#thanks_div').show();
@@ -26,8 +48,6 @@ $(function () {
     $('.input').keypress(submitForm);
 
     $('#feedback_form').on('submit', function(e) {
-        e.preventDefault();
-        alert('called');
         $('body').addClass('wait');
         var feedback_data = {}
         feedback_data['order_id'] = order_id;
