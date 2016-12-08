@@ -4,6 +4,8 @@ $(function () {
     $('#response_bubble').hide();
     $('#try_again_btn').hide();
 
+    var bot = Cookies.get('bot');
+
     var first_time = true;
     if (window.location.search) {
         first_time = false;
