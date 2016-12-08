@@ -1,27 +1,20 @@
 $(function () {
 
-    $('#input_bubble').hide();
-    $('#response_bubble').hide();
-    $('#try_again_btn').hide();
-
-    var bot = Cookies.get('bot');
+    var user_id = Cookies.get('user_id');
     var order_id = Cookies.get('order_id');
+    var bot = Cookies.get('bot');
     var input = Cookies.get('input');
     var response1 = Cookies.get('response1');
     var response2 = Cookies.get('response2');
+
+    $("#input_text").text(input);
+    $("#response1").text(response1);
+    $("#response2").text(response2);
 
     if (window.location.search) {
         $('#thanks_div').show();
         window.history.pushState(null, "", window.location.origin);
     }
-
-    $('#input_bubble').on('input', function() {
-        if ($(this).text()) {
-            $('#random_tweet_btn').hide();
-        } else {
-            $('#random_tweet_btn').show();
-        }
-    });
 
     var submitForm = function(e) {
         if (e.which == 13) {
@@ -30,197 +23,43 @@ $(function () {
         }
     };
 
-    $("#try_again_btn").click( function() {
-        window.location.reload();
-    });
-
-    $("#random_tweet_btn").click( function() {
-        var bot = $("#input_form input[name=optionsBot]:checked").val();
-        var opponent = bot == 't' ? 'c' : 't';
-        var random_tweet = "";
-
-        
-        if (first_time) {
-            var idx = Math.floor(Math.random() * (2));
-            if (bot == 't') {
-                random_tweet = clinton_tweets[idx];
-            } else {
-                random_tweet = trump_tweets[idx];
-            }
-
-            $("#input_bubble").text(random_tweet);
-            $("#input_form").submit();
-        } else {
-            $.ajax({
-                type: "POST",
-                url: "randomTweet",
-                data: {"candidate": opponent},
-                success: function (tweet)
-                {
-                    $("#input_bubble").text(tweet);
-                    $("#input_form").submit();
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    alert("Error code:" + xhr.status + ". Sorry, there was an error getting a random tweet. Please type in an input instead");
-              }
-            });
-        }
-        
-        return false;
-    }); 
-
     $('.input').keypress(submitForm);
-    $('#input_bubble').keypress(submitForm);
 
-    var inp_text = "";
-    var response_text = "";
-    $('#input_form').on('submit', function(e) {
+    $('#feedback_form').on('submit', function(e) {
         e.preventDefault();
+        alert('called');
         $('body').addClass('wait');
-        $('#random_tweet_btn').hide();
-        var bot = $("#input_form input[name=optionsBot]:checked").val();
-        
-        var candidate = bot == 't' ? 'Trump' : 'Clinton';
-        var opponent = bot == 't' ? 'Clinton' : 'Trump';
-        $("#input_bubble").text(opponent + ": " + inp_text);
-        var post_data = {
-            "input": inp_text.toLowerCase(),
-            "optionsBot": bot
-        };
+        var feedback_data = {}
+        feedback_data['order_id'] = order_id;
+        feedback_data['content_score1'] = $("#feedback_form input[name=optionsContent1]:checked").val();
+        feedback_data['content_score2'] = $("#feedback_form input[name=optionsContent2]:checked").val();
+        feedback_data['style_score1'] = $("#feedback_form input[name=optionsStyle1]:checked").val();
+        feedback_data['style_score2'] = $("#feedback_form input[name=optionsStyle1]:checked").val();
+        feedback_data['comparision'] = $("#feedback_form input[name=optionsCompare]:checked").val();
+        for (var name in feedback_data) {
+            feedback_data[name] = parseInt(feedback_data[name], 10);
+        }
+        feedback_data['user_id'] = user_id;
         $.ajax({
             type: "POST",
             url: $(this).attr('action'),
-            data: post_data,
+            data: JSON.stringify(feedback_data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             success: function (response)
             {
-                response_text = response;
                 $('body').removeClass('wait');
-                if (bot == 't') {
-                    $("#input_bubble")
-                        .removeClass()
-                        .addClass("bubble left")
-                        .css('float', 'left')
-                        .text("a random argument")
-                        .show();
-                    $("#response_bubble")
-                        .removeClass()
-                        .addClass( "bubble right" )
-                        .css('float', 'right')
-                        .html('response from model 1')
-                        .show();
-                } else {
-                    $("#input_bubble")
-                        .removeClass()
-                        .addClass("bubble right")
-                        .css('float', 'right')
-                        .text("a random argument")
-                        .show();
-                    $("#response_bubble")
-                        .removeClass()
-                        .addClass( "bubble left" )
-                        .css('float', 'left')
-                        .html('response from model 1')
-                        .show();
-                }
-
-                $("#translate_btn").hide();
-                //$("#try_again_btn").show();
-                $("#feedback_form").show();
-                
+                window.location.reload();
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert("Error code:" + xhr.status + ". Sorry, there was an error translating the tweet. Refreshing the page so you can try a different tweet");
+                alert("Error code:" + xhr.status + ". Sorry, there was an error submitting feedback. Refreshing the page.");
                 window.location.reload();
             }
         });
 
         $("#input_form :input").prop("disabled", true);
-        $('#input_bubble').attr('contenteditable', 'false');
-
-        // customize feedback form for the candidate
-        $("#candidate_name").html(candidate);
-
-        $("#feedback_form .candidate-name").each(function(i) {
-            $(this).text(candidate);
-          });
-        if (bot == 't') {
-            $("#content_question").html("Was Trump-a-bot's response about the same topic as what you typed for Clinton?");
-        } else {
-            $("#content_question").html("Was Clinton-a-bot's response about the same topic as what you typed for Trump?");
-        }
-
-    });
-
-    $('#feedback_form').on('submit', function(e) {
-        //$("#feedback_form :input").prop("disabled", true);
-        var feedback_data = {}
-        feedback_data['bot'] = $("#input_form input[name=optionsBot]:checked").val();
-        feedback_data['inp_text'] = inp_text;
-        feedback_data['response_text'] = response_text;
-        var content_score = $("#feedback_form input[name=optionsContent]:checked").val();
-        var style_score = $("#feedback_form input[name=optionsStyle]:checked").val();
-        feedback_data['content_score'] = parseInt(content_score, 10);
-        feedback_data['style_score'] = parseInt(style_score, 10);
-        var suggestion_text = $("#suggestion_text").val();
-        if (!suggestion_text) {
-            suggestion_text = ""
-        }
-        feedback_data['suggestion_text'] = suggestion_text;
-        if (firstResponse) {
-            // store feedback in a var
-            // reset the form
-            // show div for asking new feedback
-            // animate response 2
-            // show compare q
-            // make it required
-            $('#thanks_div').hide();
-            $("#response_bubble").html('response from model 2');
-            $("#response_bubble").animate({ 'zoom': 1.2 }, 400);
-            $("#response_bubble").animate({ 'zoom': 1 }, 400);
-            $("#response_bubble").focus();
-            $("#feedback_request_div").show()
-            $("#compare_wrapper").show();
-            $("#compare_wrapper input[name=optionsComparision]").attr('required', true);
-            $("#feedback_form input:radio").removeAttr("checked");
-            //$('#feedback_form').reset();
-
-        } else {
-            // store feedback for 2 also
-            // make ajax call to send both the feedback tog in a json
-            $.ajax({
-                type: "POST",
-                url: $(this).attr('action'),
-                data: JSON.stringify(feedback_data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (data)
-                {
-                    var url = window.location.href;    
-                    if (url.indexOf('?') == -1)  {
-                        url += '?thanks=1';
-                    }
-                    window.location.href = url;
-                }
-            });
-        }
-        firstResponse = false;
         return false;
     });
 
-    var checkLowScore = function() {
-        var content_score = $("#feedback_form input[name=optionsContent]:checked").val();
-        var style_score = $("#feedback_form input[name=optionsStyle]:checked").val();
-        content_score = parseInt(content_score, 10);
-        style_score = parseInt(style_score, 10);
 
-        if (content_score < 3 || style_score < 3) {
-            //$("#suggestion_wrapper").show();
-        } else {
-            $("#suggestion_wrapper").hide();
-        }
-    };
-
-    $("#feedback_form input[name=optionsContent]").on('change', checkLowScore);
-
-    $("#feedback_form input[name=optionsStyle]").on('change', checkLowScore);
 });
