@@ -5,33 +5,15 @@ $(function () {
     $('#try_again_btn').hide();
 
     var bot = Cookies.get('bot');
+    var order_id = Cookies.get('order_id');
+    var input = Cookies.get('input');
+    var response1 = Cookies.get('response1');
+    var response2 = Cookies.get('response2');
 
-    var first_time = true;
     if (window.location.search) {
-        first_time = false;
         $('#thanks_div').show();
         window.history.pushState(null, "", window.location.origin);
     }
-
-    var firstResponse = true;
-
-    var mobile = false;
-    if ($(window).width() <= 768) {
-        mobile = true;
-        $("#bubble_wrapper").before($("#trump_opt_wrapper"));
-    }
-
-    clinton_tweets = [
-    "latest reckless idea from trump: gut rules on wall street, and leave middle-class families out to dry",
-    "climate change is real, and threatens us all.",
-    "america never stopped being great. we just need to make it work for everyone",
-    "we need to make college more affordable"
-    ];
-
-    trump_tweets = [
-    "why don't we ask the navy seals who killed bin laden? they don't seem to be happy with obama claiming credit. all he did is say .",
-    "what do african-americans and hispanics have to lose by going with me. look at the poverty, crime and educational statistics. i will fix it!"
-    ];
 
     $('#input_bubble').on('input', function() {
         if ($(this).text()) {
