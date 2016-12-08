@@ -83,34 +83,39 @@ class ICTC(object):
         selected_id = None
         now = time.time()
         with waiting_lock:
+            print user_id, waiting
             for waiting_data in waiting:
                 ts, order_id, waiting_user = waiting_data
-                print user_id, waiting_data
                 if user_id == waiting_user:
                     # this pair was served to the current user
                     # but has not been answered yet
                     # so serve it again
-                    print 'serving again'
                     selected_id = order_id
+                    #print 'serving again', waiting_data
                 elif ts + time_limit > now:
                     # need to serve order_id this to user
                     true_id = pairs[order_id][2]
                     if true_id in user_data[user_id]:
                         # user has already answered this q
                         # so skip it
+                        #print 'skipping q', waiting_data
                         continue
                     else:
                         selected_id = order_id
+                        #print 'serving coz of time', waiting_data
+                else:
+                    #print 'no condition satisfied', waiting_data
                 if selected_id:
                     # update waiting data with time and user_id
                     waiting_data[0] = now
                     waiting_data[2] = user_id
                     break
 
-        if selected_id:
+        if selected_id != None:
             self.writeToServeDB(selected_id, user_id, cherrypy.request.remote.ip)
             return selected_id
         # else return pair with lowest order id
+        #print 'taking from backlog', selected_id
         with backlog_lock:
             selected_id = min(backlog)
             # remove pair from backlog
