@@ -28,6 +28,10 @@ $(function () {
         var opponent = 'Trump';
     }
 
+    $(window).on('unload', function() {
+        $(window).scrollTop(0);
+    });
+
     $("#candidate_img").attr('src', candidate + "/podium.jpg");
 
     $("#feedback_form img[name=opponent-img]").each(function(i) {
