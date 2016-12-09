@@ -88,6 +88,24 @@ body {
   border-color: transparent #377BB5;
 }
 
+.bubble.top {
+  margin-bottom: 30px;
+}
+
+.bubble.top:after {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  display: block;
+  top: auto; /* value = - border-top-width - border-bottom-width */
+  right: 450px; /* controls horizontal position */
+  bottom: -20px;
+  left:auto;
+  border-width: 0 20px 20px 0; /* vary these values to change the angle of the vertex */
+  border-color: transparent #377BB5;
+}
+
+
 #hlab_img {
   float: left;
   margin: 0 10px;
