@@ -74,7 +74,18 @@ class ICTC(object):
         request_cookie = cherrypy.request.cookie
         response_cookie = cherrypy.response.cookie
         cookies = {}
-        if 'user_id' not in request_cookie:
+        user_id = None
+        if 'user_id' in request_cookie:
+            user_id = request_cookie['user_id'].value
+            #print 'Existing user:', user_id, user_data
+            if user_id not in user_data:
+                # we do not know this user
+                # maybe from previous version
+                # invalidate and assign new id
+                user_id = None
+                #print 'But not in user_data:'
+
+        if user_id == None:
             # new user, assign a new user_id
             with user_lock:
                 user_id = next_user_id
@@ -82,9 +93,7 @@ class ICTC(object):
                 next_user_id = str(int(next_user_id) + 1)
                 user_data[user_id] = set()
             #print 'New user:', user_data
-        else:
-            user_id = request_cookie['user_id'].value
-            #print 'Existing user:', user_id, user_data
+            
         order_id = self.getPair(user_id)
         if order_id < 0:
             # we are done with possible questions for this user
