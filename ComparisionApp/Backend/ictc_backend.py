@@ -51,14 +51,21 @@ class ICTC(object):
         else:
             user_id = request_cookie['user_id'].value
         order_id = self.getPair(user_id)
-        _, _, bot, input_text, response1, response2 = pairs[order_id]
-        cookies.update({
-            'order_id': order_id,
-            'bot' : bot,
-            'input': input_text,
-            'response1': response1,
-            'response2': response2
-        })
+        if order_id < 0:
+            # we are done with possible questions for this user
+            # or done with entire backlog
+            cookies.update({
+                'order_id': order_id
+            })
+        else:
+            _, _, bot, input_text, response1, response2 = pairs[order_id]
+            cookies.update({
+                'order_id': order_id,
+                'bot' : bot,
+                'input': input_text,
+                'response1': response1,
+                'response2': response2
+            })
         for name, value in cookies.iteritems():
             response_cookie[name] = value
             response_cookie[name]['path'] = '/'
@@ -106,6 +113,9 @@ class ICTC(object):
         if selected_id != None:
             self.writeToServeDB(selected_id, user_id, cherrypy.request.remote.ip)
             return selected_id
+        elif len(backlog) == 0:
+            # nothing else in backlog
+            return -1
         # else return pair with lowest (unanswered) order id
         #print 'taking from backlog', selected_id
         with backlog_lock:
@@ -122,6 +132,9 @@ class ICTC(object):
                     pass
             # remove pair from backlog
             backlog = [order_id for order_id in backlog if order_id != selected_id]
+        if selected_id == None:
+            # No eligible question
+            return -2
         # add timestamp and put in waiting q
         with waiting_lock:
             waiting.append([now, selected_id, user_id])

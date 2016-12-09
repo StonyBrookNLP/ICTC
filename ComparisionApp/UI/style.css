@@ -28,7 +28,7 @@ body {
 }
 
 #candidate_wrapper {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .alert {
@@ -89,7 +89,7 @@ body {
 }
 
 .bubble.top {
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .bubble.top:after {

@@ -1,11 +1,24 @@
 $(function () {
-
     var user_id = Cookies.get('user_id');
     var order_id = Cookies.get('order_id');
     var bot = Cookies.get('bot');
     var input = Cookies.get('input');
     var response1 = Cookies.get('response1');
     var response2 = Cookies.get('response2');
+
+    if (order_id == -1) {
+        // We are done with all questions
+        alert('Thank you! We have reached our survey target!');
+        // Closing tab
+        window.close();
+    } else if (order_id == -2) {
+        // We are done for this user
+        alert('Thank you! You are done with all the questions!');
+        // Remove the user_id so someone else can answer these
+        // Or the same user can restart
+        Cookies.remove('user_id');
+        window.location.reload();
+    }
 
     if (bot == 'c') {
         var candidate = 'Trump';
@@ -80,6 +93,4 @@ $(function () {
         $("#input_form :input").prop("disabled", true);
         return false;
     });
-
-
 });
