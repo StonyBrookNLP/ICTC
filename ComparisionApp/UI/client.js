@@ -51,14 +51,14 @@ $(function () {
         window.history.pushState(null, "", window.location.origin);
     }
 
-    var submitForm = function(e) {
+    var submitFeedback = function(e) {
         if (e.which == 13) {
-            $(this).closest('form').submit();
+            $('#feedback_form').submit();
             return false;
         }
     };
 
-    $('.input').keypress(submitForm);
+    $('.input').keypress(submitFeedback);
 
     $('#feedback_form').on('submit', function(e) {
         $('body').addClass('wait');
