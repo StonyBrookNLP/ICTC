@@ -50,11 +50,6 @@ $(function () {
         $(this).text(opponent);
     });
 
-    if (window.location.search) {
-        $('#thanks_div').show();
-        window.history.pushState(null, "", window.location.origin);
-    }
-
     var submitFeedback = function(e) {
         if (e.which == 13) {
             $('#feedback_form').submit();
