@@ -3,25 +3,20 @@ import cherrypy
 import atexit
 import sqlite3
 import threading
+import pickle
 import time
 
 con = None
-pairs = {}
-long_txt = 'wae rawg est st h r dt hry  jtfjjt j tyjf tj tk ugy agr re g esg se g tsh rdryhdtd dh drt h ht h thfyj ftj   s e  esh srt hd  ht  a efw  fw rg e  g '
-for i in range(12):
-    s = str(i)
-    b = 't' if (i/3) % 2 else 'c'
-    pair = [i, i/3, b, 'inp' + s + long_txt, 'r1_'+ s + long_txt, 'r2_' + s + long_txt]
-    pairs[i] = pair
-
+replication = 3
 next_user_id = '1'
 user_data = {}
 waiting_lock = threading.Lock()
 backlog_lock = threading.Lock()
 user_lock = threading.Lock() # modifying user data/ next_user_id
-backlog = pairs.keys()
+backlog = []
 waiting = []
 time_limit = 1 * 60
+pairs = {}
 
 @atexit.register
 def cleanup():
@@ -32,6 +27,44 @@ def cleanup():
         cherrypy.log('Closed DB connection')
     cherrypy.log('Finished cleanup')
 
+
+def populatePairs(clinton_pairs_fn, trump_pairs_fn):
+    con.execute("create table if not exists Pairs(order_id INTEGER, true_id INTEGER, bot TEXT, input TEXT, response1 TEXT, response2 TEXT)")
+    cursor = con.execute('select * from Pairs')
+    for pair in cursor:
+        pairs[pair[0]] = pair
+    if len(pairs) > 0:
+        # Pairs already populated in DB
+        # So we have populated in-memory pairs
+        # Nothing more to do
+        return
+
+    with open(trump_pairs_fn, 'rb') as f:
+        trump_pairs = pickle.load(f)
+    for pair in trump_pairs:
+        pair.insert(0, 't')
+    with open(clinton_pairs_fn, 'rb') as f:
+        clinton_pairs = pickle.load(f)
+    for pair in clinton_pairs:
+        pair.insert(0, 'c')
+
+    order_id = 0
+    for pair in trump_pairs + clinton_pairs:
+        #print pair
+        (bot, input_text, response1, response2) = pair
+        true_id = order_id/replication
+        for i in range(replication):
+            values = [
+                order_id,
+                true_id,
+                bot,
+                input_text,
+                response1,
+                response2
+            ]
+            pairs[order_id] = values
+            con.execute('insert into Pairs(order_id, true_id, bot, input, response1, response2) values(?, ?, ?, ?, ?, ?)', values)
+            order_id += 1
 
 class ICTC(object):
 
@@ -48,8 +81,10 @@ class ICTC(object):
                 cookies['user_id'] = user_id
                 next_user_id = str(int(next_user_id) + 1)
                 user_data[user_id] = set()
+            #print 'New user:', user_data
         else:
             user_id = request_cookie['user_id'].value
+            #print 'Existing user:', user_id, user_data
         order_id = self.getPair(user_id)
         if order_id < 0:
             # we are done with possible questions for this user
@@ -166,6 +201,7 @@ class ICTC(object):
             waiting = [pair for pair in waiting if pair[1] != order_id]
 
         values = [
+            order_id,
             bot,
             input_text,
             response1,
@@ -178,7 +214,7 @@ class ICTC(object):
             user_id,
             cherrypy.request.remote.ip
         ]
-        con.execute('insert into Feedback(bot, input, response1, response2, content_score1, content_score2, style_score1, style_score2, comparision, user_id, ip) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', values)
+        con.execute('insert into Feedback(order_id, bot, input, response1, response2, content_score1, content_score2, style_score1, style_score2, comparision, user_id, ip) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', values)
 
         return True
 
@@ -186,12 +222,13 @@ class ICTC(object):
 if __name__ == '__main__':
     home_dir = '/Users/bobby/Downloads'
     #home_dir = '/home/stufs1/vgottipati'
+    app_root = home_dir + '/Static'
 
     con = sqlite3.connect(
         home_dir + '/comparision.db', 
         isolation_level=None, 
         check_same_thread=False)
-    con.execute("create table if not exists Feedback(bot TEXT, input TEXT, response1 TEXT, response2 TEXT, content_score1 INTEGER NOT NULL, content_score2 INTEGER NOT NULL, style_score1 INTEGER NOT NULL, style_score2 INTEGER NOT NULL, comparision INTEGER NOT NULL, suggestion TEXT, user_id TEXT, ip TEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)")
+    con.execute("create table if not exists Feedback(order_id INTEGER, bot TEXT, input TEXT, response1 TEXT, response2 TEXT, content_score1 INTEGER NOT NULL, content_score2 INTEGER NOT NULL, style_score1 INTEGER NOT NULL, style_score2 INTEGER NOT NULL, comparision INTEGER NOT NULL, suggestion TEXT, user_id TEXT, ip TEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)")
     con.execute("create table if not exists Serve(order_id INTEGER, user_id TEXT, ip TEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)")
 
     cherrypy.engine.subscribe('stop', cleanup)
@@ -199,7 +236,7 @@ if __name__ == '__main__':
     app_conf = {
         '/': {
             'tools.staticdir.on'            : True,
-            'tools.staticdir.dir'           : home_dir + '/Static'
+            'tools.staticdir.dir'           : app_root
         }
     }
 
@@ -212,8 +249,17 @@ if __name__ == '__main__':
                        })
 
     client_html = ''
-    with open(home_dir + '/Static/ictc.html', 'r') as client_html_file:
+    with open(app_root + '/ictc.html', 'r') as client_html_file:
         client_html = client_html_file.read()
+
+    populatePairs(home_dir + '/clinton_bot.test', home_dir + '/trump_bot.test')
+
+    cursor = con.execute('select order_id from Feedback')
+    answered_pairs = set()
+    for (order_id,) in cursor:
+        answered_pairs.add(order_id)
+    backlog = set(pairs.keys()) - answered_pairs
+    backlog = list(backlog)
 
     try:
         cherrypy.quickstart(ICTC(), '/', app_conf)
