@@ -98,7 +98,7 @@ body {
   border-style: solid;
   display: block;
   top: auto; /* value = - border-top-width - border-bottom-width */
-  right: 450px; /* controls horizontal position */
+  right: 50%; /* controls horizontal position */
   bottom: -20px;
   left:auto;
   border-width: 0 20px 20px 0; /* vary these values to change the angle of the vertex */
