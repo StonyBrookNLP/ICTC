@@ -39,8 +39,8 @@ $(function () {
     });
 
     $("#input_text").text(candidate + ": " + input);
-    $("#response1").text(opponent + " response 1: " + response1);
-    $("#response2").text(opponent + " response 2: " + response2);
+    $("#response1").text(opponent + "1: " + response1);
+    $("#response2").text(opponent + "2: " + response2);
 
     $("#feedback_form .candidate-name").each(function(i) {
         $(this).text(candidate);
