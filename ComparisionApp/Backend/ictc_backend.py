@@ -103,19 +103,26 @@ class ICTC(object):
             })
         else:
             _, _, bot, input_text, response1, response2 = pairs[order_id]
+            if bot == 'c':
+                candidate = 'Trump'
+                opponent = 'Clinton'
+            else:
+                candidate = 'Clinton'
+                opponent = 'Trump'
+            input_text = candidate + ": " + input_text
+            response1 = opponent + " 1: " + response1
+            response2 = opponent + " 2: " + response2
+
             cookies.update({
                 'order_id': order_id,
-                'bot' : bot,
-                'input': input_text,
-                'response1': response1,
-                'response2': response2
+                'bot' : bot
             })
         for name, value in cookies.iteritems():
             response_cookie[name] = value
             response_cookie[name]['path'] = '/'
             response_cookie[name]['max-age'] = 3600 ** 5
             response_cookie[name]['version'] = 1
-        return client_html
+        return client_html.format(input_text, response1, response2)
 
     @cherrypy.expose
     @cherrypy.tools.json_out()

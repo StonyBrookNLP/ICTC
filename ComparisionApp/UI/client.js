@@ -2,9 +2,6 @@ $(function () {
     var user_id = Cookies.get('user_id');
     var order_id = Cookies.get('order_id');
     var bot = Cookies.get('bot');
-    var input = Cookies.get('input');
-    var response1 = Cookies.get('response1');
-    var response2 = Cookies.get('response2');
 
     if (order_id == -1) {
         // We are done with all questions
@@ -37,10 +34,6 @@ $(function () {
     $("#feedback_form img[name=opponent-img]").each(function(i) {
         $(this).attr('src', opponent + "/podium.jpg");
     });
-
-    $("#input_text").text(candidate + ": " + input);
-    $("#response1").text(opponent + "1: " + response1);
-    $("#response2").text(opponent + "2: " + response2);
 
     $("#feedback_form .candidate-name").each(function(i) {
         $(this).text(candidate);
