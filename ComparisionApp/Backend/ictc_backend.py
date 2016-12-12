@@ -12,10 +12,10 @@ next_user_id = '1'
 user_data = {}
 waiting_lock = threading.Lock()
 backlog_lock = threading.Lock()
-user_lock = threading.Lock() # modifying user data/ next_user_id
+user_lock = threading.Lock() # modifying user data/next_user_id
 backlog = []
 waiting = []
-time_limit = 1 * 60
+time_limit = 5 * 60
 pairs = {}
 
 @atexit.register
@@ -49,7 +49,7 @@ def populatePairs(clinton_pairs_fn, trump_pairs_fn):
         pair.insert(0, 'c')
 
     order_id = 0
-    for pair in trump_pairs + clinton_pairs:
+    for pair in clinton_pairs + trump_pairs:
         #print pair
         (bot, input_text, response1, response2) = pair
         true_id = order_id/replication
@@ -65,6 +65,22 @@ def populatePairs(clinton_pairs_fn, trump_pairs_fn):
             pairs[order_id] = values
             con.execute('insert into Pairs(order_id, true_id, bot, input, response1, response2) values(?, ?, ?, ?, ?, ?)', values)
             order_id += 1
+
+def populateUserData():
+    global next_user_id
+    cursor = con.execute("select user_id, order_id from Feedback")
+    with user_lock:
+        for (user_id, order_id) in cursor:
+            true_id = pairs[order_id][1]
+            try:
+                user_data[user_id].add(true_id)
+            except:
+                user_data[user_id] = {true_id}
+
+        if len(user_data):
+            next_user_id = max((int(x) for x in user_data.keys())) + 1
+            next_user_id = str(next_user_id)
+
 
 class ICTC(object):
 
@@ -269,6 +285,7 @@ if __name__ == '__main__':
         client_html = client_html_file.read()
 
     populatePairs(home_dir + '/clinton_bot.test', home_dir + '/trump_bot.test')
+    populateUserData()
 
     cursor = con.execute('select order_id from Feedback')
     answered_pairs = set()
@@ -276,6 +293,14 @@ if __name__ == '__main__':
         answered_pairs.add(order_id)
     backlog = set(pairs.keys()) - answered_pairs
     backlog = list(backlog)
+    num_answered = sum(len(x) for x in user_data.values())
+    print 'Total number of pairs:', len(pairs)
+    print 'Number of pairs answered:', len(answered_pairs)
+    print 'Number of pairs in backlog', len(backlog)
+    print 'Number of users who have given feedback', len(user_data)
+    print 'Number of pairs answered - from user_data', num_answered
+    print 'Next user id', next_user_id
+    #print user_data
 
     try:
         cherrypy.quickstart(ICTC(), '/', app_conf)
