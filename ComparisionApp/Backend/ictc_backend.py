@@ -157,7 +157,7 @@ class ICTC(object):
                     # so serve it again
                     selected_id = order_id
                     #print 'serving again', waiting_data
-                elif ts + time_limit > now:
+                elif ts + time_limit < now:
                     # need to serve order_id this to user
                     true_id = pairs[order_id][1]
                     if true_id in user_data[user_id]:
