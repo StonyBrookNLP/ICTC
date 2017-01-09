@@ -5,6 +5,9 @@ import sqlite3
 import threading
 import pickle
 import time
+import random
+
+import config
 
 con = None
 replication = 3
@@ -87,6 +90,8 @@ class ICTC(object):
     @cherrypy.expose
     def index(self):
         global next_user_id
+
+        is_swapped = random.choice([True, False])
         request_cookie = cherrypy.request.cookie
         response_cookie = cherrypy.response.cookie
         cookies = {}
@@ -109,7 +114,7 @@ class ICTC(object):
                 next_user_id = str(int(next_user_id) + 1)
                 user_data[user_id] = set()
             #print 'New user:', user_data
-            
+
         order_id = self.getPair(user_id)
         if order_id < 0:
             # we are done with possible questions for this user
@@ -126,8 +131,12 @@ class ICTC(object):
                 candidate = 'Clinton'
                 opponent = 'Trump'
             input_text = candidate + ": " + input_text
-            response1 = opponent + " 1: " + response1
-            response2 = opponent + " 2: " + response2
+            if not is_swapped:
+                response1 = opponent + " 1: " + response1
+                response2 = opponent + " 2: " + response2
+            else:
+                response1 = opponent + " 2: " + response1
+                response2 = opponent + " 1: " + response2
 
             cookies.update({
                 'order_id': order_id,
@@ -138,7 +147,11 @@ class ICTC(object):
             response_cookie[name]['path'] = '/'
             response_cookie[name]['max-age'] = 3600 ** 5
             response_cookie[name]['version'] = 1
-        return client_html.format(input_text, response1, response2)
+        if not is_swapped:
+            html_template = client_html
+        else:
+            html_template = client_html2
+        return html_template.format(input_text, response1, response2)
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -227,7 +240,7 @@ class ICTC(object):
         order_id = int(feedback_data['order_id'])
         _, true_id, bot, input_text, response1, response2 = pairs[order_id]
         user_data[user_id].add(true_id)
-                
+
         with waiting_lock:
             # remove pair from waiting
             waiting = [pair for pair in waiting if pair[1] != order_id]
@@ -242,33 +255,28 @@ class ICTC(object):
             feedback_data['content_score2'],
             feedback_data['style_score1'],
             feedback_data['style_score2'],
-            feedback_data['comparision'],
+            feedback_data['comparison'],
             user_id,
             cherrypy.request.remote.ip
         ]
-        con.execute('insert into Feedback(order_id, bot, input, response1, response2, content_score1, content_score2, style_score1, style_score2, comparision, user_id, ip) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', values)
+        con.execute('insert into Feedback(order_id, bot, input, response1, response2, content_score1, content_score2, style_score1, style_score2, comparison, user_id, ip) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', values)
 
         return True
 
 
 if __name__ == '__main__':
-    home_dir = '/Users/bobby/Downloads'
-    #home_dir = '/home/stufs1/vgottipati'
-    app_root = home_dir + '/Static'
-
-    con = sqlite3.connect(
-        home_dir + '/comparision.db', 
-        isolation_level=None, 
-        check_same_thread=False)
-    con.execute("create table if not exists Feedback(order_id INTEGER, bot TEXT, input TEXT, response1 TEXT, response2 TEXT, content_score1 INTEGER NOT NULL, content_score2 INTEGER NOT NULL, style_score1 INTEGER NOT NULL, style_score2 INTEGER NOT NULL, comparision INTEGER NOT NULL, suggestion TEXT, user_id TEXT, ip TEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)")
+    con = sqlite3.connect(config.data_dir + '/comparison.db',
+                          isolation_level=None,
+                          check_same_thread=False)
+    con.execute("create table if not exists Feedback(order_id INTEGER, bot TEXT, input TEXT, response1 TEXT, response2 TEXT, content_score1 INTEGER NOT NULL, content_score2 INTEGER NOT NULL, style_score1 INTEGER NOT NULL, style_score2 INTEGER NOT NULL, comparison INTEGER NOT NULL, suggestion TEXT, user_id TEXT, ip TEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)")
     con.execute("create table if not exists Serve(order_id INTEGER, user_id TEXT, ip TEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)")
 
     cherrypy.engine.subscribe('stop', cleanup)
 
     app_conf = {
         '/': {
-            'tools.staticdir.on'            : True,
-            'tools.staticdir.dir'           : app_root
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': config.app_root
         }
     }
 
@@ -276,15 +284,18 @@ if __name__ == '__main__':
         'server.socket_host': '0.0.0.0',
         'server.socket_port': 8080,
         'log.screen': False,
-        'log.access_file': home_dir + '/server_access.log',
-        'log.error_file': home_dir + '/server_error.log'
-                       })
+        'log.access_file': config.home_dir + '/server_access.log',
+        'log.error_file': config.home_dir + '/server_error.log'})
 
     client_html = ''
-    with open(app_root + '/ictc.html', 'r') as client_html_file:
+    with open(config.app_root + '/ictc.html', 'r') as client_html_file:
         client_html = client_html_file.read()
+    client_html2 = ''
+    with open(config.app_root + '/ictc_swapped.html', 'r') as client_html_file:
+        client_html2 = client_html_file.read()
 
-    populatePairs(home_dir + '/clinton_bot.test', home_dir + '/trump_bot.test')
+    populatePairs(config.data_dir + '/clinton_bot.test.tokenized',
+                  config.data_dir + '/trump_bot.test.tokenized')
     populateUserData()
 
     cursor = con.execute('select order_id from Feedback')
