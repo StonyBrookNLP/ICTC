@@ -60,7 +60,7 @@ $(function () {
         feedback_data['content_score2'] = $("#feedback_form input[name=optionsContent2]:checked").val();
         feedback_data['style_score1'] = $("#feedback_form input[name=optionsStyle1]:checked").val();
         feedback_data['style_score2'] = $("#feedback_form input[name=optionsStyle1]:checked").val();
-        feedback_data['comparision'] = $("#feedback_form input[name=optionsCompare]:checked").val();
+        feedback_data['comparison'] = $("#feedback_form input[name=optionsCompare]:checked").val();
         for (var name in feedback_data) {
             feedback_data[name] = parseInt(feedback_data[name], 10);
         }
