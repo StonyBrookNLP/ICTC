@@ -151,7 +151,7 @@ def train():
         class1=FLAGS.c1_name, class2=FLAGS.c2_name)
 
     with tf.Session() as sess:
-        scope = "{}->{}".format(FLAGS.c1_name, FLAGS.c2_name)
+        scope = "{}_{}".format(FLAGS.c1_name, FLAGS.c2_name)
         with tf.variable_scope(scope):
             # Create model.
             print("Creating {} layers of {} units.".format(FLAGS.num_layers,
@@ -225,7 +225,7 @@ def train():
 def decode():
     with tf.Session() as sess:
         # Create model and load parameters.
-        scope = "{}->{}".format(FLAGS.c1_name, FLAGS.c2_name)
+        scope = "{}_{}".format(FLAGS.c1_name, FLAGS.c2_name)
         with tf.variable_scope(scope):
             model = create_model(sess, True)
         model.batch_size = 1  # We decode one sentence at a time.
