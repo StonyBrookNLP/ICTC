@@ -55,8 +55,8 @@ tf.app.flags.DEFINE_integer("batch_size", 64,
                             "Batch size to use during training.")
 tf.app.flags.DEFINE_integer("size", 1024, "Size of each model layer.")
 tf.app.flags.DEFINE_integer("num_layers", 3, "Number of layers in the model.")
-tf.app.flags.DEFINE_integer("c1_vocab_size", 40000, "class1 vocabulary size.")
-tf.app.flags.DEFINE_integer("c2_vocab_size", 40000, "class2 vocabulary size.")
+tf.app.flags.DEFINE_integer("src_vocab_size", 40000, "Source vocabulary size.")
+tf.app.flags.DEFINE_integer("tgt_vocab_size", 40000, "Target vocabulary size.")
 tf.app.flags.DEFINE_string("data_dir", "/tmp", "Data directory")
 tf.app.flags.DEFINE_string("train_dir", "/tmp", "Training directory.")
 tf.app.flags.DEFINE_integer("max_train_data_size", 0,
@@ -69,8 +69,8 @@ tf.app.flags.DEFINE_boolean("self_test", False,
                             "Run a self-test if this is set to True.")
 tf.app.flags.DEFINE_boolean("use_fp16", False,
                             "Train using fp16 instead of fp32.")
-tf.app.flags.DEFINE_string("c1_name", "en", "Name of class1")
-tf.app.flags.DEFINE_string("c2_name", "fr", "Name of class2")
+tf.app.flags.DEFINE_string("src_name", "en", "Name of source")
+tf.app.flags.DEFINE_string("tgt_name", "fr", "Name of target")
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -121,8 +121,8 @@ def create_model(session, forward_only):
     """Create translation model and initialize or load parameters in session."""
     dtype = tf.float16 if FLAGS.use_fp16 else tf.float32
     model = seq2seq_model.Seq2SeqModel(
-        FLAGS.c1_vocab_size,
-        FLAGS.c2_vocab_size,
+        FLAGS.src_vocab_size,
+        FLAGS.tgt_vocab_size,
         _buckets,
         FLAGS.size,
         FLAGS.num_layers,
@@ -146,12 +146,12 @@ def train():
     """Train a en->fr translation model using WMT data."""
     # Prepare WMT data.
     print("Preparing data in %s" % FLAGS.data_dir)
-    c1_train, c2_train, c1_dev, c2_dev, _, _ = data_utils.prepare_data(
-        FLAGS.data_dir, FLAGS.c1_vocab_size, FLAGS.c2_vocab_size,
-        class1=FLAGS.c1_name, class2=FLAGS.c2_name)
+    src_train, tgt_train, src_dev, tgt_dev, _, _ = data_utils.prepare_data(
+        FLAGS.data_dir, FLAGS.src_vocab_size, FLAGS.tgt_vocab_size,
+        src_name=FLAGS.src_name, tgt_name=FLAGS.tgt_name)
 
     with tf.Session() as sess:
-        scope = "{}_{}".format(FLAGS.c1_name, FLAGS.c2_name)
+        scope = "{}_{}".format(FLAGS.src_name, FLAGS.tgt_name)
         with tf.variable_scope(scope):
             # Create model.
             print("Creating {} layers of {} units.".format(FLAGS.num_layers,
@@ -160,8 +160,8 @@ def train():
 
         # Read data into buckets and compute their sizes.
         print("Reading development and training data (limit: {}).".format(FLAGS.max_train_data_size))
-        dev_set = read_data(c1_dev, c2_dev)
-        train_set = read_data(c1_train, c2_train, FLAGS.max_train_data_size)
+        dev_set = read_data(src_dev, tgt_dev)
+        train_set = read_data(src_train, tgt_train, FLAGS.max_train_data_size)
         train_bucket_sizes = [len(train_set[b]) for b in xrange(len(_buckets))]
         train_total_size = float(sum(train_bucket_sizes))
 
@@ -225,20 +225,20 @@ def train():
 def decode():
     with tf.Session() as sess:
         # Create model and load parameters.
-        scope = "{}_{}".format(FLAGS.c1_name, FLAGS.c2_name)
+        scope = "{}_{}".format(FLAGS.src_name, FLAGS.tgt_name)
         with tf.variable_scope(scope):
             model = create_model(sess, True)
         model.batch_size = 1  # We decode one sentence at a time.
 
         # Load vocabularies.
-        c1_vocab_path = os.path.join(FLAGS.data_dir,
-                                     "vocab{}.{}".format(FLAGS.c1_vocab_size,
-                                                         FLAGS.c1_name))
-        c2_vocab_path = os.path.join(FLAGS.data_dir,
-                                     "vocab{}.{}".format(FLAGS.c2_vocab_size,
-                                                         FLAGS.c2_name))
-        c1_vocab, _ = data_utils.initialize_vocabulary(c1_vocab_path)
-        _, rev_c2_vocab = data_utils.initialize_vocabulary(c2_vocab_path)
+        src_vocab_path = os.path.join(FLAGS.data_dir,
+                                      "vocab{}.{}".format(FLAGS.src_vocab_size,
+                                                          FLAGS.src_name))
+        tgt_vocab_path = os.path.join(FLAGS.data_dir,
+                                      "vocab{}.{}".format(FLAGS.tgt_vocab_size,
+                                                          FLAGS.tgt_name))
+        src_vocab, _ = data_utils.initialize_vocabulary(src_vocab_path)
+        _, rev_tgt_vocab = data_utils.initialize_vocabulary(tgt_vocab_path)
 
         # Decode from standard input.
         sys.stdout.write("> ")
@@ -247,7 +247,7 @@ def decode():
         while sentence:
             # Get token-ids for the input sentence.
             token_ids = data_utils.sentence_to_token_ids(tf.compat.as_bytes(sentence),
-                                                         c1_vocab)
+                                                         src_vocab)
             # Which bucket does it belong to?
             try:
                 bucket_id = min([b for b in xrange(len(_buckets))
@@ -265,7 +265,7 @@ def decode():
                 if data_utils.EOS_ID in outputs:
                     outputs = outputs[:outputs.index(data_utils.EOS_ID)]
                 # Print out class2 sentence corresponding to outputs.
-                print(" ".join([tf.compat.as_str(rev_c2_vocab[output]) for output in outputs]))
+                print(" ".join([tf.compat.as_str(rev_tgt_vocab[output]) for output in outputs]))
             except:
                 print("input too long")
             finally:
@@ -281,14 +281,14 @@ def decode2():
         model.batch_size = 1  # We decode one sentence at a time.
 
         # Load vocabularies.
-        c1_vocab_path = os.path.join(FLAGS.data_dir,
-                                     "vocab{}.{}".format(FLAGS.c1_vocab_size,
-                                                         FLAGS.c1_name))
-        c2_vocab_path = os.path.join(FLAGS.data_dir,
-                                     "vocab{}.{}".format(FLAGS.c2_vocab_size,
-                                                         FLAGS.c2_name))
-        c1_vocab, _ = data_utils.initialize_vocabulary(c1_vocab_path)
-        _, rev_c2_vocab = data_utils.initialize_vocabulary(c2_vocab_path)
+        src_vocab_path = os.path.join(FLAGS.data_dir,
+                                      "vocab{}.{}".format(FLAGS.src_vocab_size,
+                                                          FLAGS.src_name))
+        tgt_vocab_path = os.path.join(FLAGS.data_dir,
+                                      "vocab{}.{}".format(FLAGS.tgt_vocab_size,
+                                                          FLAGS.tgt_name))
+        src_vocab, _ = data_utils.initialize_vocabulary(src_vocab_path)
+        _, rev_tgt_vocab = data_utils.initialize_vocabulary(tgt_vocab_path)
 
         # Decode from standard input.
         sys.stdout.write("> ")
@@ -297,7 +297,7 @@ def decode2():
         while sentence:
             # Get token-ids for the input sentence.
             token_ids = data_utils.sentence_to_token_ids(tf.compat.as_bytes(sentence),
-                                                         c1_vocab)
+                                                         src_vocab)
             # Which bucket does it belong to?
             bucket_id = len(_buckets) - 1
             for i, bucket in enumerate(_buckets):
@@ -319,7 +319,7 @@ def decode2():
             if data_utils.EOS_ID in outputs:
                 outputs = outputs[:outputs.index(data_utils.EOS_ID)]
             # Print out class2 sentence corresponding to outputs.
-            print(" ".join([tf.compat.as_str(rev_c2_vocab[output]) for output in outputs]))
+            print(" ".join([tf.compat.as_str(rev_tgt_vocab[output]) for output in outputs]))
             print("> ", end="")
             sys.stdout.flush()
             sentence = sys.stdin.readline()

@@ -183,25 +183,25 @@ def data_to_token_ids(data_path, target_path, vocabulary_path,
                     tokens_file.write("\n")
 
 
-def prepare_data(data_dir, c1_vocabulary_size, c2_vocabulary_size, tokenizer=None,
-                 class1="en", class2="fr"):
+def prepare_data(data_dir, src_vocabulary_size, tgt_vocabulary_size, tokenizer=None,
+                 src_name="en", tgt_name="fr"):
     """Get data from data_dir, create vocabularies and tokenize data.
 
     Args:
         data_dir: directory in which the data sets will be stored.
-        c1_vocabulary_size: size of the class1 vocabulary to create and use.
-        c2_vocabulary_size: size of the class2 vocabulary to create and use.
+        src_vocabulary_size: size of the source vocabulary to create and use.
+        tgt_vocabulary_size: size of the target vocabulary to create and use.
         tokenizer: a function to use to tokenize each data sentence;
           if None, basic_tokenizer will be used.
 
     Returns:
     A tuple of 6 elements:
-      (1) path to the token-ids for class1 training data-set,
-      (2) path to the token-ids for class2 training data-set,
-      (3) path to the token-ids for class1 development data-set,
-      (4) path to the token-ids for class2 development data-set,
-      (5) path to the class1 vocabulary file,
-      (6) path to the class2 vocabulary file.
+      (1) path to the token-ids for source training data-set,
+      (2) path to the token-ids for target training data-set,
+      (3) path to the token-ids for source development data-set,
+      (4) path to the token-ids for target development data-set,
+      (5) path to the source vocabulary file,
+      (6) path to the target vocabulary file.
     """
     # Get wmt data to the specified directory.
     train_path = os.path.join(data_dir, "train")
@@ -210,31 +210,33 @@ def prepare_data(data_dir, c1_vocabulary_size, c2_vocabulary_size, tokenizer=Non
     print(train_path)
 
     # Create vocabularies of the appropriate sizes.
-    c1_vocab_path = os.path.join(data_dir, "vocab{}.{}".format(c1_vocabulary_size,
-                                                               class1))
-    c2_vocab_path = os.path.join(data_dir, "vocab{}.{}".format(c2_vocabulary_size,
-                                                               class2))
-    create_vocabulary(c1_vocab_path, train_path + ".{}".format(class1),
-                      c1_vocabulary_size, tokenizer)
-    create_vocabulary(c2_vocab_path, train_path + ".{}".format(class2),
-                      c2_vocabulary_size, tokenizer)
+    src_vocab_path = os.path.join(data_dir, "vocab{}.{}".format(src_vocabulary_size,
+                                                                src_name))
+    tgt_vocab_path = os.path.join(data_dir, "vocab{}.{}".format(tgt_vocabulary_size,
+                                                                tgt_name))
+    create_vocabulary(src_vocab_path, train_path + ".{}".format(src_name),
+                      src_vocabulary_size, tokenizer)
+    create_vocabulary(tgt_vocab_path, train_path + ".{}".format(tgt_name),
+                      tgt_vocabulary_size, tokenizer)
 
     # Create token ids for the training data.
-    c1_train_ids_path = train_path + ".ids{}.{}".format(c1_vocabulary_size, class1)
-    c2_train_ids_path = train_path + ".ids{}.{}".format(c2_vocabulary_size, class2)
-    data_to_token_ids(train_path + ".{}".format(class1), c1_train_ids_path,
-                      c1_vocab_path, tokenizer)
-    data_to_token_ids(train_path + ".{}".format(class2), c2_train_ids_path,
-                      c2_vocab_path, tokenizer)
+    src_train_ids_path = train_path + ".ids{}.{}".format(src_vocabulary_size,
+                                                         src_name)
+    tgt_train_ids_path = train_path + ".ids{}.{}".format(tgt_vocabulary_size,
+                                                         tgt_name)
+    data_to_token_ids(train_path + ".{}".format(src_name), src_train_ids_path,
+                      src_vocab_path, tokenizer)
+    data_to_token_ids(train_path + ".{}".format(tgt_name), tgt_train_ids_path,
+                      tgt_vocab_path, tokenizer)
 
     # Create token ids for the development data.
-    c1_dev_ids_path = dev_path + ".ids{}.{}".format(c1_vocabulary_size, class1)
-    c2_dev_ids_path = dev_path + ".ids{}.{}".format(c2_vocabulary_size, class2)
-    data_to_token_ids(dev_path + ".{}".format(class1), c1_dev_ids_path,
-                      c1_vocab_path, tokenizer)
-    data_to_token_ids(dev_path + ".{}".format(class2), c2_dev_ids_path,
-                      c2_vocab_path, tokenizer)
+    src_dev_ids_path = dev_path + ".ids{}.{}".format(src_vocabulary_size, src_name)
+    tgt_dev_ids_path = dev_path + ".ids{}.{}".format(tgt_vocabulary_size, tgt_name)
+    data_to_token_ids(dev_path + ".{}".format(src_name), src_dev_ids_path,
+                      src_vocab_path, tokenizer)
+    data_to_token_ids(dev_path + ".{}".format(tgt_name), tgt_dev_ids_path,
+                      tgt_vocab_path, tokenizer)
 
-    return (c1_train_ids_path, c2_train_ids_path,
-            c1_dev_ids_path, c2_dev_ids_path,
-            c1_vocab_path, c2_vocab_path)
+    return (src_train_ids_path, tgt_train_ids_path,
+            src_dev_ids_path, tgt_dev_ids_path,
+            src_vocab_path, tgt_vocab_path)
