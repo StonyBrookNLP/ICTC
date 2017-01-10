@@ -36,6 +36,7 @@ import os
 import random
 import sys
 import time
+import logging
 
 import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
@@ -137,7 +138,7 @@ def create_model(session, forward_only):
         model.saver.restore(session, ckpt.model_checkpoint_path)
     else:
         print("Created model with fresh parameters.")
-        session.run(tf.initialize_all_variables())
+        session.run(tf.global_variables_initializer())
     return model
 
 
@@ -150,7 +151,7 @@ def train():
         class1=FLAGS.c1_name, class2=FLAGS.c2_name)
 
     with tf.Session() as sess:
-        scope = "{}_{}".format(FLAGS.c2_name, FLAGS.c1_name)
+        scope = "{}->{}".format(FLAGS.c1_name, FLAGS.c2_name)
         with tf.variable_scope(scope):
             # Create model.
             print("Creating {} layers of {} units.".format(FLAGS.num_layers,
@@ -224,8 +225,8 @@ def train():
 def decode():
     with tf.Session() as sess:
         # Create model and load parameters.
-        scope = "{}_{}".format(FLAGS.c2_name, FLAGS.c1_name)
-        with tf.variable_scope('fr_en'):
+        scope = "{}->{}".format(FLAGS.c1_name, FLAGS.c2_name)
+        with tf.variable_scope(scope):
             model = create_model(sess, True)
         model.batch_size = 1  # We decode one sentence at a time.
 
@@ -273,6 +274,57 @@ def decode():
                 sentence = sys.stdin.readline()
 
 
+def decode2():
+    with tf.Session() as sess:
+        # Create model and load parameters.
+        model = create_model(sess, True)
+        model.batch_size = 1  # We decode one sentence at a time.
+
+        # Load vocabularies.
+        c1_vocab_path = os.path.join(FLAGS.data_dir,
+                                     "vocab{}.{}".format(FLAGS.c1_vocab_size,
+                                                         FLAGS.c1_name))
+        c2_vocab_path = os.path.join(FLAGS.data_dir,
+                                     "vocab{}.{}".format(FLAGS.c2_vocab_size,
+                                                         FLAGS.c2_name))
+        c1_vocab, _ = data_utils.initialize_vocabulary(c1_vocab_path)
+        _, rev_c2_vocab = data_utils.initialize_vocabulary(c2_vocab_path)
+
+        # Decode from standard input.
+        sys.stdout.write("> ")
+        sys.stdout.flush()
+        sentence = sys.stdin.readline()
+        while sentence:
+            # Get token-ids for the input sentence.
+            token_ids = data_utils.sentence_to_token_ids(tf.compat.as_bytes(sentence),
+                                                         c1_vocab)
+            # Which bucket does it belong to?
+            bucket_id = len(_buckets) - 1
+            for i, bucket in enumerate(_buckets):
+                if bucket[0] >= len(token_ids):
+                    bucket_id = i
+                    break
+                else:
+                    logging.warning("Sentence truncated: %s", sentence)
+
+            # Get a 1-element batch to feed the sentence to the model.
+            encoder_inputs, decoder_inputs, target_weights = model.get_batch(
+                {bucket_id: [(token_ids, [])]}, bucket_id)
+            # Get output logits for the sentence.
+            _, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs,
+                                             target_weights, bucket_id, True)
+            # This is a greedy decoder - outputs are just argmaxes of output_logits.
+            outputs = [int(np.argmax(logit, axis=1)) for logit in output_logits]
+            # If there is an EOS symbol in outputs, cut them at that point.
+            if data_utils.EOS_ID in outputs:
+                outputs = outputs[:outputs.index(data_utils.EOS_ID)]
+            # Print out class2 sentence corresponding to outputs.
+            print(" ".join([tf.compat.as_str(rev_c2_vocab[output]) for output in outputs]))
+            print("> ", end="")
+            sys.stdout.flush()
+            sentence = sys.stdin.readline()
+
+
 def self_test():
     """Test the translation model."""
     with tf.Session() as sess:
@@ -297,7 +349,7 @@ def main(_):
     if FLAGS.self_test:
         self_test()
     elif FLAGS.decode:
-        decode()
+        decode2()
     else:
         train()
 
