@@ -48,7 +48,7 @@ def process_quotes(tweet, target):
     elif target == "trump":
         speaker_candidates = ["donald", "trump"]
 
-    quote_re = re.compile("\A\"([^\"]+)\" *-+ *([@a-z]+)")
+    quote_re = re.compile("\A\"([^\"]+)\" *-+ *([@\w]+)")
     match = quote_re.search(tweet)
     if match:
         quote = match.group(1)
