@@ -106,7 +106,7 @@ if __name__ == '__main__':
     out_dir = "tensorflow/data/clinton_to_trump/"
     write_pairs_to_f(hrc_test, out_dir + "test.clinton", out_dir + "test.trump")
     write_pairs_to_f(hrc_tune, out_dir + "dev.clinton", out_dir + "dev.trump")
-    write_pairs_to_f(hrc_tune, out_dir + "train.clinton", out_dir + "train.trump")
+    write_pairs_to_f(hrc_train, out_dir + "train.clinton", out_dir + "train.trump")
 
     print "Aligning Trump --> Clinton"
     trump_test, trump_tune, trump_train = align_tweets(trump_tweets, trump_embed,
