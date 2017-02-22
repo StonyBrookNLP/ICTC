@@ -1,0 +1,4 @@
+data/*
+tensorflow/checkpoints/*
+tensorflow/data/*
+*.pyc

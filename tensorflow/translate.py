@@ -252,6 +252,7 @@ def decode():
             try:
                 bucket_id = min([b for b in xrange(len(_buckets))
                                  if _buckets[b][0] > len(token_ids)])
+                print("\tBucket ID:", bucket_id)
                 # Get a 1-element batch to feed the sentence to the model.
                 encoder_inputs, decoder_inputs, target_weights = model.get_batch(
                     {bucket_id: [(token_ids, [])]}, bucket_id)
@@ -261,6 +262,7 @@ def decode():
                                                  bucket_id, True)
                 # This is a greedy decoder - outputs are just argmaxes of output_logits.
                 outputs = [int(np.argmax(logit, axis=1)) for logit in output_logits]
+                print(outputs)
                 # If there is an EOS symbol in outputs, cut them at that point.
                 if data_utils.EOS_ID in outputs:
                     outputs = outputs[:outputs.index(data_utils.EOS_ID)]
@@ -349,7 +351,7 @@ def main(_):
     if FLAGS.self_test:
         self_test()
     elif FLAGS.decode:
-        decode2()
+        decode()
     else:
         train()
 
