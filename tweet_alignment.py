@@ -3,6 +3,7 @@ import numpy as np
 import re
 
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS as stopwords
 
 
 def load_embeddings(fname):
@@ -40,6 +41,8 @@ def get_tweet_embeddings(tweets, embeddings_dict, num_dims=200):
         embed = [0.0 for _ in range(num_dims)]
         count = 0
         for tok in tweet:
+            if tok in stopwords:
+                continue
             if user_re.search(tok):
                 count += add_embed_for_tok(embed, "<user>", embeddings_dict)
             elif hashtag_re.search(tok):
