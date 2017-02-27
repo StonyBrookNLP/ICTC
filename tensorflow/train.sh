@@ -1,15 +1,15 @@
 # Clinton: layers = 3; size = 1024
 # Trump: layers = 2; size = 512
 
-TRAIN_DIR="checkpoints"
-DATA_DIR="data/clinton_to_trump"
-SIZE=1024
-NUM_LAYERS=3
+TRAIN_DIR="checkpoints/trump_to_clinton"
+DATA_DIR="data/trump_to_clinton"
+SIZE=512
+NUM_LAYERS=2
 STEPS_PER_CHECKPOINT=50
 
-SRC_NAME="clinton"
+SRC_NAME="trump"
 SRC_VOCAB_SIZE=40000
-TGT_NAME="trump"
+TGT_NAME="clinton"
 TGT_VOCAB_SIZE=40000
 
 LEARNING_RATE=0.5
