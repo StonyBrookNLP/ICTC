@@ -78,12 +78,10 @@ class Decoder(object):
             FLAGS.batch_size,
             FLAGS.learning_rate,
             FLAGS.learning_rate_decay_factor,
-            forward_only=forward_only,
-            dtype=dtype,
-            tf_scope=scope_name)
+            forward_only=forward_only)
 
         ckpt = tf.train.get_checkpoint_state(self.train_dir)
-        if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
+        if ckpt and os.path.exists(ckpt.model_checkpoint_path):
             print "Reading model parameters from", ckpt.model_checkpoint_path
             model.saver.restore(session, ckpt.model_checkpoint_path)
             return model
@@ -93,7 +91,7 @@ class Decoder(object):
     def decode(self, sentence):
 
         # Get token-ids for the input sentence.
-        token_ids = data_utils.sentence_to_token_ids(tf.compat.as_bytes(sentence), self.en_vocab)
+        token_ids = data_utils.sentence_to_token_ids(tf.compat.as_bytes(sentence), self.src_vocab)
         # Which bucket does it belong to?
         bucket_id = min([b for b in xrange(len(_buckets))
                          if _buckets[b][0] > len(token_ids)])
@@ -121,33 +119,37 @@ class Decoder(object):
 
 def main():
     c2t_params = {
-        'data_dir': '/home/veronica/ICTC/tensorflow/data/clinton_to_trump/',
-        'train_dir': '/home/veronica/ICTC/tensorflow/checkpoints/clinton_to_trump/',
+        'data_dir': 'data/clinton_to_trump/',
+        'train_dir': 'checkpoints/clinton_to_trump/',
         'size': 512,
         'n_layers': 2,
         'src_name': 'clinton',
         'tgt_name': 'trump'}
 
-    c2t_params = {
-        'data_dir': '/home/veronica/ICTC/tensorflow/data/trump_to_clinton/',
-        'train_dir': '/home/veronica/ICTC/tensorflow/checkpoints/trump_to_clinton/',
+    t2c_params = {
+        'data_dir': 'data/trump_to_clinton/',
+        'train_dir': 'checkpoints/trump_to_clinton/',
         'size': 512,
         'n_layers': 2,
         'src_name': 'trump',
         'tgt_name': 'clinton'}
 
-    params = c2t_params
-    out_fname = 'output/c2t_test'
-    in_fname = os.path.join(params['data_dir'], 'train.clinton')
+    params = t2c_params
+    out_fname = 'output/t2c_test'
+    in_fname = os.path.join(params['data_dir'], 'test.trump')
 
     dc = Decoder(params)
-
+    
+    count = 0
     with open(in_fname, 'r') as in_f:
         with open(out_fname, 'w') as out_f:
             for line in in_f:
                 tweet = line.strip()
                 translated = dc.decode(tweet)
                 out_f.write(translated + '\n')
+		count += 1
+		if count % 10 == 0:
+		    print count
 
     dc.close_session()
 
