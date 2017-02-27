@@ -120,41 +120,36 @@ class Decoder(object):
 
 
 def main():
-    params1_dict = {
-        'data_dir': '/home/shbhatia/tensorflow-0.11.0rc1/tensorflow/models/rnn/translate/debate/trump_data_dir/Tweets/',
-        'train_dir': '/home/shbhatia/tensorflow-0.11.0rc1/tensorflow/models/rnn/translate/debate/checkpoints/trump_debate_checkpoint/',
-        'size': 256,
-        'n_layers': 1,
+    c2t_params = {
+        'data_dir': '/home/veronica/ICTC/tensorflow/data/clinton_to_trump/',
+        'train_dir': '/home/veronica/ICTC/tensorflow/checkpoints/clinton_to_trump/',
+        'size': 512,
+        'n_layers': 2,
         'src_name': 'clinton',
         'tgt_name': 'trump'}
 
-    params2_dict = {
-        'data_dir': '/home/shbhatia/tensorflow-0.11.0rc1/tensorflow/models/rnn/translate/debate/clinton_data_dir/Tweets/',
-        'train_dir': '/home/shbhatia/tensorflow-0.11.0rc1/tensorflow/models/rnn/translate/debate/checkpoints/clinton_debate_checkpoint/',
-        'size': 256,
-        'n_layers': 1,
+    c2t_params = {
+        'data_dir': '/home/veronica/ICTC/tensorflow/data/trump_to_clinton/',
+        'train_dir': '/home/veronica/ICTC/tensorflow/checkpoints/trump_to_clinton/',
+        'size': 512,
+        'n_layers': 2,
         'src_name': 'trump',
         'tgt_name': 'clinton'}
 
-    dc1 = Decoder(params1_dict)
-    dc2 = Decoder(params2_dict)
+    params = c2t_params
+    out_fname = 'output/c2t_test'
+    in_fname = os.path.join(params['data_dir'], 'train.clinton')
 
-    ####translate sentence###
-    clinton_tweets = [
-        'latest reckless idea from trump: gut rules on wall street, and leave middle-class families out to dry',
-        'climate change is real, and threatens us all.',
-        'america never stopped being great. we just need to make it work for everyone',
-        'we need to make college more affordable',
-        'it’s time to act on gun violence',
-        'gun violence is ripping apart people’s lives'
-    ]
+    dc = Decoder(params)
 
-    for tweet in clinton_tweets:
-        print(dc1.decode(tweet))
+    with open(in_fname, 'r') as in_f:
+        with open(out_fname, 'w') as out_f:
+            for line in in_f:
+                tweet = line.strip()
+                translated = dc.decode(tweet)
+                out_f.write(translated + '\n')
 
-    ####close the session####
-    dc1.close_session()
-    dc2.close_session()
+    dc.close_session()
 
 
 if __name__ == '__main__':
